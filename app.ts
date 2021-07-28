@@ -1,17 +1,17 @@
-let resultado:number = 0;
 
-async function operacion(ope:string, num1:number, num2:number) {
-    let {default: operaciones} = await import('./operaciones')
+function sepaText(fra:string, cb:Function, temp:number = 1000){
+
+    let words = fra.split(" ")
+    console.log(words)
+    setTimeout(cb, temp)
     
-    if(ope === 'suma' || '+'){
-        let sumatoria = new operaciones(num1, num2)
-        resultado = sumatoria.suma()
-        return resultado
-    }else{
-        let resta = new operaciones(num1, num2)
-        resultado = resta.resta()
-        return resultado
-    }
+    
 }
 
-operacion("suma", 2, 3).then(()=> console.log(resultado)).catch((e) => console.log("error", e))
+sepaText("este texto es el texto numero 1" , 
+        () => {sepaText("este texto es el texto numero 2", 
+            () => {sepaText("este texto es el texto numero 3",
+                ()=> console.log("TAREA TERMINADA")
+                    )},1000
+                )},
+        3000)
