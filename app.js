@@ -1,12 +1,37 @@
-"use strict";
-function sepaText(fra, cb, temp) {
-    if (temp === void 0) { temp = 1000; }
-    var words = fra.split(" ");
-    console.log(words);
-    setTimeout(cb, temp);
-}
-sepaText("este texto es el texto numero 1", function () {
-    sepaText("este texto es el texto numero 2", function () {
-        sepaText("este texto es el texto numero 3", function () { return console.log("TAREA TERMINADA"); });
-    }, 1000);
-}, 3000);
+        const cantidadDePalabras = (longitud) => {
+            return console.log(`La cantidad de palabras es: ${longitud} \n`);
+          };
+
+
+        const recorrerPalabra = async (texto, callback, tiempo = 1000) => {
+            let words = texto.split(" ").filter((e) => {
+              if (e !== "") {
+                return e;
+              }
+              return "Inserte palabras";
+            });
+            let longitud = words.length;
+            for (i in words) {
+              await timer(tiempo);
+              console.log(words[i]);
+            }
+            callback(longitud);
+          };
+          // timer para mostar palabras
+          const timer = (tiempo) => {
+            return new Promise((res, rej) => {
+              setTimeout(() => {
+                res();
+              }, tiempo);
+            });
+          };
+          // llamada asyncrona para mostrar palabra en orden
+          (async () => {
+            try {
+              await recorrerPalabra("hola mundo coder", cantidadDePalabras);
+              await recorrerPalabra("desafio tutor coder", cantidadDePalabras, 2000);
+              await recorrerPalabra("esto es una prueba", cantidadDePalabras, 1000);
+            } catch (error) {
+              console.log(error);
+            }
+          })();
