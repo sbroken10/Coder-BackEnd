@@ -64,17 +64,8 @@ function del (a){
 
 
 
-router.get('/a', (req, res) => {
-    res.send(
-        `<div>
-        <h1> El listado de rutas es </h1>
-        <ul>
-        <li>/api/productos/listar</li>
-        <li>/api/productos/listar/:id</li>
-        <li>/api/productos/guardar</li>
-        </ul>
-        </div>`
-    )
+router.get('/', (req, res) => {
+    res.render('main', {} )
 })
 
 
