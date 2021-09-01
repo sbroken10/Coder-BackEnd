@@ -3,15 +3,15 @@ const router = express.Router();
 
 let arrPro = [
     {
-        title: 'a',
-        price: 11,
-        thumbnail: 'url',
+        title: 'Stone Cuting Sword',
+        price: 2500,
+        thumbnail: 'https://cdn3.iconfinder.com/data/icons/fantasy-and-role-play-game-adventure-quest/512/Sword-128.png',
         id: '1'
     },
     {
-        title: 'b',
-        price: 22,
-        thumbnail: 'url',
+        title: 'Mystical Mail',
+        price: 3800,
+        thumbnail: 'https://cdn3.iconfinder.com/data/icons/fantasy-and-role-play-game-adventure-quest/512/Armor-128.png',
         id: '2'
     },
 ];
@@ -44,6 +44,14 @@ function filtarID(a) {
     return proID
 
 }
+function exist() {
+    if(arrPro.length > 0){
+        return true
+    }else{
+        return false
+    }
+    
+}
 function update(a,title,price,thumb){
     const proIndex = arrPro.findIndex(obj => obj.id == a)
     const copyObj = arrPro[proIndex]
@@ -63,19 +71,8 @@ function del (a){
 }
 
 
-
-router.get('/', (req, res) => {
-    res.render('main', {} )
-})
-
-
 router.get('/productos/listar', (req, res, next) => {
-    if(arrPro <= 0){
-        res.json('No hay elementos cargados');
-    }else{
-        res.json(listarTodo());
-        next()
-    }
+    res.render('main', {itemExist: true, arrPro: arrPro} )
 })
 
 router.get('/productos/listar/:id', (req, res, next) => {
@@ -96,11 +93,8 @@ router.post('/productos/guardar', (req, res) => {
     if (Object.entries(req.body).length > 0) {
         
         let productoN = new productos(req.body.title, req.body.price, req.body.thumbnail, genID())
-        console.log(req.body.title)
-        console.log(req.body.price)
-        console.log(req.body.thumbnail)
         arrPro.push({ ...productoN })
-        res.json(req.body)
+        res.redirect('/')
     } else {
         res.json('No hay parametros')
     }

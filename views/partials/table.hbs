@@ -1,5 +1,5 @@
-{{#if itemExist}}
-<table class="table table-striped">
+
+<table class="table-dark">
     <tr>
         <th scope="col">#</th>
         <th scope="col">Title</th>
@@ -10,12 +10,8 @@
     <tr>
         <th scope="row">{{this.id}}</th>
         <th>{{this.title}}</th>
-        <th>${{this.price}}</th>
-        <th><img src="{{this.thumbnail}}" alt="{{this.title}}"></th>
-        
+        <th>{{this.price}}</th>
+        <th>{{this.thumbnail}}</th>
     </tr>
     {{/each}}
 </table>
-{{else}}
-<h1>No hay Elementos</h1>
-{{/if}}
