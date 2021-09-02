@@ -9,13 +9,8 @@ const app = express();
 const server = app.listen(8080, () => {
     console.log("servidor en el puerto 8080")
 });
-app.engine("hbs", handlebars({
-    extname: "hbs",
-    defaultLayout: "index.hbs",
-    layoutsDir: "./views/layouts",
-    partialsDir: "./views/partials"
-}))
-app.set("view engine", "hbs");
+
+app.set("view engine", "pug");
 app.set("views", "./views")
 app.use(express.static('public'))
 app.use(express.json());

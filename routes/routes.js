@@ -72,7 +72,7 @@ function del (a){
 
 
 router.get('/productos/listar', (req, res, next) => {
-    res.render('main', {itemExist: true, arrPro: arrPro} )
+    res.render('hellow.pug', {itemExist: exist(), arrPro: arrPro} )
 })
 
 router.get('/productos/listar/:id', (req, res, next) => {
