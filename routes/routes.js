@@ -69,10 +69,12 @@ function del (a){
     return arrPro.splice(proIndex,1)
 
 }
-
+router.get('/', (req, res, next) => {
+    res.render('index.html')
+})
 
 router.get('/productos/listar', (req, res, next) => {
-    res.render('pages/index', {itemExist: exist(), arrPro: arrPro} )
+    res.render('main', {itemExist: true, arrPro: arrPro} )
 })
 
 router.get('/productos/listar/:id', (req, res, next) => {
