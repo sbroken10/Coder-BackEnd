@@ -69,8 +69,8 @@ function del (a){
     return arrPro.splice(proIndex,1)
 
 }
-router.get('/', (req, res, next) => {
-    res.render('index.html')
+router.get('/a', (req, res, next) => {
+    res.sendFile('index.html')
 })
 
 router.get('/productos/listar', (req, res, next) => {

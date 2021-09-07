@@ -1,18 +1,13 @@
-import express from 'express'
-import handlebars from 'express-handlebars'
-import {router} from './routes/routes.js'
-import {createServer} from "http";
-import {Server} from 'socket.io'
+const express = require('express'),
+      app = express(),
+      http = require('http').Server(app)
+      io = require('socket.io')(http);
+
+const handlebars = require('express-handlebars')
+const router = express.Router();
 
 
-const httpServer = createServer();
-const io = new Server(httpServer, {
-
-})
-
-const app = express();
-
-httpServer.listen(8080, () => {
+http.listen(8080, () => {
     console.log("servidor en el puerto 8080")
 });
 app.engine("hbs", handlebars({
@@ -24,16 +19,14 @@ app.engine("hbs", handlebars({
 app.set("view engine", "hbs");
 app.set("views", "./views")
 app.use(express.static('./public'))
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-app.get('/', (req, res, next) => {
-    res.sendFile('index.html')
-})
 
 app.use('/api', router)
 
-io.on("connection", (socket) => {
+io.on('connection', (socket) => {
     console.log(socket.id); 
+    socket.emit('a', 'este es el mensajes')
+    socket.on('noti', data =>{
+        console.log(data)
+    })
   });
 
