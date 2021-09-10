@@ -1,20 +1,21 @@
-import express from 'express'
+const express = require('express')
 const router = express.Router();
 
-let arrPro = [
-    {
-        title: 'Stone Cuting Sword',
-        price: 2500,
-        thumbnail: 'https://cdn3.iconfinder.com/data/icons/fantasy-and-role-play-game-adventure-quest/512/Sword-128.png',
-        id: '1'
-    },
-    {
-        title: 'Mystical Mail',
-        price: 3800,
-        thumbnail: 'https://cdn3.iconfinder.com/data/icons/fantasy-and-role-play-game-adventure-quest/512/Armor-128.png',
-        id: '2'
-    },
-];
+// let arrPro = [
+//     {
+//         title: 'Stone Cuting Sword',
+//         price: 2500,
+//         thumbnail: 'https://cdn3.iconfinder.com/data/icons/fantasy-and-role-play-game-adventure-quest/512/Sword-128.png',
+//         id: '1'
+//     },
+//     {
+//         title: 'Mystical Mail',
+//         price: 3800,
+//         thumbnail: 'https://cdn3.iconfinder.com/data/icons/fantasy-and-role-play-game-adventure-quest/512/Armor-128.png',
+//         id: '2'
+//     },
+// ];
+
 class productos {
 
     constructor(a, b, c, d) {
@@ -69,11 +70,12 @@ function del (a){
     return arrPro.splice(proIndex,1)
 
 }
-router.get('/a', (req, res, next) => {
-    res.sendFile('index.html')
-})
 
-router.get('/productos/listar', (req, res, next) => {
+router.get('/productos', (req, res, next) => {
+    var io = req.app.get('socketio');
+    io.on('productSave', data =>{
+        console.log(data)
+    })
     res.render('main', {itemExist: true, arrPro: arrPro} )
 })
 
@@ -96,7 +98,7 @@ router.post('/productos/guardar', (req, res) => {
         
         let productoN = new productos(req.body.title, req.body.price, req.body.thumbnail, genID())
         arrPro.push({ ...productoN })
-        res.redirect('/')
+        res.redirect('/api/productos')
     } else {
         res.json('No hay parametros')
     }
@@ -118,4 +120,5 @@ router.delete('/productos/borrar/:id', (req, res) => {
 
 })
 
-export {router}
+module.exports = router;
+
