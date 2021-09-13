@@ -1,20 +1,7 @@
 const express = require('express')
 const router = express.Router();
+const arrPro = require('../server.js')
 
-// let arrPro = [
-//     {
-//         title: 'Stone Cuting Sword',
-//         price: 2500,
-//         thumbnail: 'https://cdn3.iconfinder.com/data/icons/fantasy-and-role-play-game-adventure-quest/512/Sword-128.png',
-//         id: '1'
-//     },
-//     {
-//         title: 'Mystical Mail',
-//         price: 3800,
-//         thumbnail: 'https://cdn3.iconfinder.com/data/icons/fantasy-and-role-play-game-adventure-quest/512/Armor-128.png',
-//         id: '2'
-//     },
-// ];
 
 class productos {
 
@@ -72,11 +59,10 @@ function del (a){
 }
 
 router.get('/productos', (req, res, next) => {
+    console.log(arrPro)
     var io = req.app.get('socketio');
-    io.on('productSave', data =>{
-        console.log(data)
-    })
-    res.render('main', {itemExist: true, arrPro: arrPro} )
+
+    res.render('main', {itemExist: true, arrPro: arrPro.SimpleMessage} )
 })
 
 router.get('/productos/listar/:id', (req, res, next) => {

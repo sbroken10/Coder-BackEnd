@@ -1,4 +1,17 @@
-
+let arrPro = [
+    {
+        title: 'Stone Cuting Sword',
+        price: 2500,
+        thumbnail: 'https://cdn3.iconfinder.com/data/icons/fantasy-and-role-play-game-adventure-quest/512/Sword-128.png',
+        id: '1'
+    },
+    {
+        title: 'Mystical Mail',
+        price: 3800,
+        thumbnail: 'https://cdn3.iconfinder.com/data/icons/fantasy-and-role-play-game-adventure-quest/512/Armor-128.png',
+        id: '2'
+    },
+];
 const express = require('express'),
       app = express(),
       http = require('http').Server(app),
@@ -31,12 +44,12 @@ app.get('/', (req, res, next) => {
 
 io.on('connection', (socket) => {
     console.log(socket.id); 
-    socket.emit('a', 'este es el mensajes')
-    socket.on('noti', data =>{
-        console.log(data)
-    })
+    socket.emit('constant', arrPro)
     socket.on('productSave', data =>{
-        console.log(data)
+        arrPro.push(data)
+        console.log(arrPro)
+        io.emit("update", arrPro)
     })
   });
+
 
