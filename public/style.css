@@ -3,6 +3,11 @@
     margin-left: 5vh;
     width: 80vh;
 }
+.chatContainer{
+    margin-top: 5vh;
+    margin-left: 5vh;
+    width: auto;
+}
 .spanContainer{
     margin-right: 2vh;
 }
@@ -17,4 +22,16 @@
 .btnCustom{
     margin-left: 10vh;
     width: 60vh;
+}
+.email{
+    font-size: 20px;
+    color: blue;
+}
+.date{
+    font-size: 15px;
+    color: rgb(165, 90, 21);
+}
+.msg{
+    font-size: 20px;
+    color: rgb(20, 97, 1);
 }

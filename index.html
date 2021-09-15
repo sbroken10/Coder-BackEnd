@@ -39,6 +39,7 @@
             <button class="btn btn-dark btnCustom" id="send">Crear</button>
         </div>
     </div>
+    <hr>
     <script type="text/html" id="template">
         {{#if itemExist}}
         <table class="table table-striped">
@@ -62,7 +63,37 @@
         <h1>No hay Elementos</h1>
         {{/if}}
     </script>
-    <div id="render">      
+    <script type="text/html" id="template-chat">
+            <div>
+                {{#each messages}}
+                    <p class="date"><strong class="email">{{this.usr}} </strong> [{{this.date}}] <i class="msg"> {{this.msg}} </i> </p>
+                {{/each}}
+            </div>
+    </script>
+    <div id="render">
+    </div>
+    <hr>
+    <div id="chatBox">
+        <h1>Chat Box</h1>
+        <div class="formContainer">
+            <div class="input-group mb-3">
+                <span class="input-group-text spanContainer1">E-Mail</span>
+                <input type="text" class="form-control" placeholder="e-Mail" aria-label="e-Mail"
+                    aria-describedby="basic-addon1" id="emailImput" id="emailImput">
+            </div>
+        </div>
+        <hr>
+        <div id="chatRender" class="chatContainer">
+
+        </div>
+        <hr>
+        <div class="formContainer">
+            <div class="input-group mb-3">
+                <button type="button" class="btn btn-dark" id="messageButton">Enviar</button>
+                <input type="text" class="form-control" placeholder="mensaje" aria-label="mensaje"
+                    aria-describedby="basic-addon1" name="mensaje" id="messageImput">
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"

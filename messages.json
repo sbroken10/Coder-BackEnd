@@ -1,0 +1,17 @@
+[
+	{
+		"msg": "Hola, este es un mensaje de prueba",
+		"usr": "pc1@gmail.com",
+		"date": "15/8/2021 15:51:27"
+	},
+	{
+		"msg": "Genial, esta funcionando perfectamente",
+		"usr": "pc2@hotmail.com",
+		"date": "15/8/2021 15:51:51"
+	},
+	{
+		"msg": "Excelente ahora toca subirlo a Glitch.com",
+		"usr": "pc1@gmail.com",
+		"date": "15/8/2021 15:52:11"
+	}
+]
