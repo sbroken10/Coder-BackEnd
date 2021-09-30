@@ -1,110 +1,110 @@
-const express = require('express')
-const router = express.Router();
-const arrPro = require('../server.js')
+'use strict';
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-class productos {
+var express = require('express');
+var router = express.Router();
+var arrPro = require('../server.es6.js');
 
-    constructor(a, b, c, d) {
-        this.title = a;
-        this.price = b;
-        this.thumbnail = c;
-        this.id = d;
-    }
+var productos = function productos(a, b, c, d) {
+    _classCallCheck(this, productos);
 
+    this.title = a;
+    this.price = b;
+    this.thumbnail = c;
+    this.id = d;
 };
+
+;
 function genID() {
 
-    let tempID = arrPro.length + 1;
-    return tempID.toString()
+    var tempID = arrPro.length + 1;
+    return tempID.toString();
 }
 function listarTodo() {
-    let arr2 = arrPro.map(e => { e.title 
-        let items = {}
-        items = e
-        return items
-    })
-    return arr2
+    var arr2 = arrPro.map(function (e) {
+        e.title;
+        var items = {};
+        items = e;
+        return items;
+    });
+    return arr2;
 }
 function filtarID(a) {
 
-    let proID = arrPro.find(obj => obj.id === a)
-    return proID
-
+    var proID = arrPro.find(function (obj) {
+        return obj.id === a;
+    });
+    return proID;
 }
 function exist() {
-    if(arrPro.length > 0){
-        return true
-    }else{
-        return false
+    if (arrPro.length > 0) {
+        return true;
+    } else {
+        return false;
     }
-    
 }
-function update(a,title,price,thumb){
-    const proIndex = arrPro.findIndex(obj => obj.id == a)
-    const copyObj = arrPro[proIndex]
+function update(a, title, price, thumb) {
+    var proIndex = arrPro.findIndex(function (obj) {
+        return obj.id == a;
+    });
+    var copyObj = arrPro[proIndex];
 
-    copyObj.title = title
-    copyObj.price = price
-    copyObj.thumbnail = thumb
+    copyObj.title = title;
+    copyObj.price = price;
+    copyObj.thumbnail = thumb;
 
-    return arrPro[proIndex]
-
+    return arrPro[proIndex];
 }
-function del (a){
-    
-    const proIndex = arrPro.findIndex(obj => obj.id == a)
-    return arrPro.splice(proIndex,1)
+function del(a) {
 
+    var proIndex = arrPro.findIndex(function (obj) {
+        return obj.id == a;
+    });
+    return arrPro.splice(proIndex, 1);
 }
 
-router.get('/productos', (req, res, next) => {
-    console.log(arrPro)
+router.get('/productos', function (req, res, next) {
+    console.log(arrPro);
     var io = req.app.get('socketio');
 
-    res.render('main', {itemExist: true, arrPro: arrPro.SimpleMessage} )
-})
+    res.render('main', { itemExist: true, arrPro: arrPro.SimpleMessage });
+});
 
-router.get('/productos/listar/:id', (req, res, next) => {
+router.get('/productos/listar/:id', function (req, res, next) {
 
     console.log(req.params.id);
-    const proFilter = filtarID(req.params.id);
-    if(proFilter){
+    var proFilter = filtarID(req.params.id);
+    if (proFilter) {
         res.json(proFilter);
-    }else{
+    } else {
         res.json('Producto no encontrado');
     }
-    
-})
+});
 
-
-router.post('/productos/guardar', (req, res) => {
-    console.log(req.body)
+router.post('/productos/guardar', function (req, res) {
+    console.log(req.body);
     if (Object.entries(req.body).length > 0) {
-        
-        let productoN = new productos(req.body.title, req.body.price, req.body.thumbnail, genID())
-        arrPro.push({ ...productoN })
-        res.redirect('/api/productos')
+
+        var productoN = new productos(req.body.title, req.body.price, req.body.thumbnail, genID());
+        arrPro.push({ productoN: productoN });
+        res.redirect('/api/productos');
     } else {
-        res.json('No hay parametros')
+        res.json('No hay parametros');
     }
+});
 
-})
-
-router.put('/productos/actualizar/:id', (req, res) => {
+router.put('/productos/actualizar/:id', function (req, res) {
     if (Object.entries(req.query).length > 0) {
-        
-        res.json(update(req.params.id,req.query.title, req.query.price, req.query.thumbnail))
+
+        res.json(update(req.params.id, req.query.title, req.query.price, req.query.thumbnail));
     } else {
-        res.json('No hay parametros')
+        res.json('No hay parametros');
     }
+});
+router.delete('/productos/borrar/:id', function (req, res) {
 
-})
-router.delete('/productos/borrar/:id', (req, res) => {
-     
-        res.json(del(req.params.id))
-
-})
+    res.json(del(req.params.id));
+});
 
 module.exports = router;
-
