@@ -21,7 +21,7 @@ const express = require('express'),
 
 
 const handlebars = require('express-handlebars')
-const router = require('./routes/routes.es6.js')
+const routes = require('./routes/routes.es6.js')
 
 const fs = require('fs');
 
@@ -38,7 +38,7 @@ app.set("view engine", "hbs");
 app.set("views", "./views")
 app.use(express.static('./public'))
 
-app.use('/api', router)
+app.use('/api', routes)
 app.set('socketio', io)
 app.get('/', (req, res, next) => {
     res.sendFile('index.html', { root: __dirname })

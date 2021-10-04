@@ -18,7 +18,7 @@ var express = require('express'),
     io = require('socket.io')(http);
 
 var handlebars = require('express-handlebars');
-var router = require('./routes/routes.es6.js');
+var routes = require('./routes/routes.js');
 
 var fs = require('fs');
 
@@ -35,7 +35,7 @@ app.set("view engine", "hbs");
 app.set("views", "./views");
 app.use(express.static('./public'));
 
-app.use('/api', router);
+app.use('/api', routes);
 app.set('socketio', io);
 app.get('/', function (req, res, next) {
     res.sendFile('index.html', { root: __dirname });
