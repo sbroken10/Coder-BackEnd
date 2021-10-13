@@ -1,5 +1,5 @@
 const express = require('express')
-const router = express.Router();
+const cRouter = express.Router();
 const arrPro = require('../server.es6.js')
 
 
@@ -58,14 +58,14 @@ function del (a){
 
 }
 
-router.get('/productos', (req, res, next) => {
+cRouter.get('/productos', (req, res, next) => {
     console.log(arrPro)
     var io = req.app.get('socketio');
 
     res.render('main', {itemExist: true, arrPro: arrPro.SimpleMessage} )
 })
 
-router.get('/productos/listar/:id', (req, res, next) => {
+cRouter.get('/productos/listar/:id', (req, res, next) => {
 
     console.log(req.params.id);
     const proFilter = filtarID(req.params.id);
@@ -78,7 +78,7 @@ router.get('/productos/listar/:id', (req, res, next) => {
 })
 
 
-router.post('/productos/guardar', (req, res) => {
+cRouter.post('/productos/guardar', (req, res) => {
     console.log(req.body)
     if (Object.entries(req.body).length > 0) {
         
@@ -91,7 +91,7 @@ router.post('/productos/guardar', (req, res) => {
 
 })
 
-router.put('/productos/actualizar/:id', (req, res) => {
+cRouter.put('/productos/actualizar/:id', (req, res) => {
     if (Object.entries(req.query).length > 0) {
         
         res.json(update(req.params.id,req.query.title, req.query.price, req.query.thumbnail))
@@ -100,11 +100,11 @@ router.put('/productos/actualizar/:id', (req, res) => {
     }
 
 })
-router.delete('/productos/borrar/:id', (req, res) => {
+cRouter.delete('/productos/borrar/:id', (req, res) => {
      
         res.json(del(req.params.id))
 
 })
 
-module.exports = router;
+module.exports = cRouter;
 

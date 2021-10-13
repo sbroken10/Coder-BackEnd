@@ -1,48 +1,40 @@
-let arrPro = [
-    {
-        title: 'Stone Cuting Sword',
-        price: 2500,
-        thumbnail: 'https://cdn3.iconfinder.com/data/icons/fantasy-and-role-play-game-adventure-quest/512/Sword-128.png',
-        id: '1'
-    },
-    {
-        title: 'Mystical Mail',
-        price: 3800,
-        thumbnail: 'https://cdn3.iconfinder.com/data/icons/fantasy-and-role-play-game-adventure-quest/512/Armor-128.png',
-        id: '2'
-    },
-];
-let msgArr = []
 const express = require('express'),
     app = express(),
     http = require('http').Server(app),
     io = require('socket.io')(http);
-
-
-
-const handlebars = require('express-handlebars')
-const routes = require('./routes/routes.es6.js')
-
+const cRoutes = require('./routes/carritoRoutes.es6.js')
+const pRoutes = require('./routes/productosRoutes.es6.js')
 const fs = require('fs');
+const { use } = require('./routes/productosRoutes.es6.js');
+
 
 http.listen(8080, () => {
     console.log("servidor en el puerto 8080")
 });
-app.engine("hbs", handlebars({
-    extname: "hbs",
-    defaultLayout: "index.hbs",
-    layoutsDir: "./views/layouts",
-    partialsDir: "./views/partials"
-}))
-app.set("view engine", "hbs");
-app.set("views", "./views")
+
+// const handlebars = require('express-handlebars')
+// app.engine("hbs", handlebars({
+//     extname: "hbs",
+//     defaultLayout: "index.hbs",
+//     layoutsDir: "./views/layouts",
+//     partialsDir: "./views/partials"
+// }))
+// app.set("view engine", "hbs");
+// app.set("views", "./views")
+
 app.use(express.static('./public'))
 
-app.use('/api', routes)
+app.use('/productos', pRoutes)
+app.use('/carrito', cRoutes)
+app.use(express.json())
+app.use(express.urlencoded({extended: true}))
+
+
 app.set('socketio', io)
-app.get('/', (req, res, next) => {
-    res.sendFile('index.html', { root: __dirname })
-})
+
+// app.get('/', (req, res, next) => {
+//     res.sendFile('index.html', { root: __dirname })
+// })
 
 function guardar(message) {
     try {
@@ -61,7 +53,7 @@ function guardar(message) {
     } catch (err) {
         try {
             console.log('No existe el archivo para agregar los productos, se procede a crearlo')
-            fs.writeFile('./messages.json', JSON.stringify([{message }]))
+            fs.writeFileSync('./messages.json', JSON.stringify([{message }]))
         } catch (err) {
             throw new Error(err)
         }
