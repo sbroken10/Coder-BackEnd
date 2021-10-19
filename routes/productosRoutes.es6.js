@@ -1,5 +1,6 @@
 const express = require('express')
 const pRouter = express.Router();
+const fs = require('fs');
 
 
 class productos {
@@ -17,11 +18,13 @@ class productos {
 
 };
 
+let key = false;
+
 let arrPro = []
 
 function readProducts() {
     try {
-        const data = fs.readFileSync('./messages.json');
+        const data = fs.readFileSync('./productos.json');
         const json = JSON.parse(data.toString('utf-8'))
         console.log("se va a leer el archivo")
         console.log(json)
@@ -40,6 +43,9 @@ function genID() {
     readProducts()
     let tempID = arrPro.length + 1;
     return tempID.toString()
+}
+function genTimeStamp() {
+    return Date.now();
 }
 function listarTodo() {
     readProducts()
@@ -68,12 +74,8 @@ function exist() {
 function guardar(producto) {
     try {
         const data = fs.readFileSync('./productos.json', 'utf-8');
-        console.log(data)
         const json = JSON.parse(data.toString('utf-8'))
-        console.log(json)
-        console.log(message)
-        json.push({ producto })
-        console.log(json)
+        json.push(producto)
         try {
             fs.writeFileSync('./productos.json', JSON.stringify(json, null, '\t'))
         } catch (err) {
@@ -82,14 +84,14 @@ function guardar(producto) {
     } catch (err) {
         try {
             console.log('No existe el archivo para agregar los productos, se procede a crearlo')
-            fs.writeFileSync('./productos.json', JSON.stringify([{ producto }]))
+            fs.writeFileSync('./productos.json', JSON.stringify([producto]))
         } catch (err) {
             throw new Error(err)
         }
     }
 }
 
-function update(id, nombre, descripcion, codigo, foto, precio, stock, timeStamp) {
+function update(id, nombre, descripcion, codigo, foto, precio, stock) {
     readProducts()
     const proIndex = arrPro.findIndex(obj => obj.id == id)
     // const copyObj = arrPro[proIndex]
@@ -100,7 +102,7 @@ function update(id, nombre, descripcion, codigo, foto, precio, stock, timeStamp)
     arrPro[proIndex].foto = foto;
     arrPro[proIndex].precio = precio;
     arrPro[proIndex].stock = stock;
-    arrPro[proIndex].timeStamp = timeStamp;
+    arrPro[proIndex].timeStamp = genTimeStamp();
     arrPro[proIndex].id = id;
     // console.log(arrPro.splice(proIndex, 1, copyObj))
     // arrPro.splice(proIndex, 1, copyObj)
@@ -127,7 +129,6 @@ function del(a) {
     } catch (err) {
         try {
             console.log('No existe el archivo para agregar los productos, se procede a crearlo')
-            fs.writeFileSync('./productos.json', JSON.stringify([{ producto }]))
         } catch (err) {
             throw new Error(err)
         }
@@ -157,30 +158,55 @@ pRouter.get('/listar/:id', (req, res, next) => {
 })
 
 pRouter.post('/agregar', (req, res) => {
-    console.log(req.body) // da undefined
-    if (Object.entries(req.body).length > 0) {
-        let productoN = new productos(req.body.nombre, req.body.descripcion, req.body.codigo, req.body.foto, req.body.precio, req.body.stock, req.body.timeStamp, genID())
-        guardar(productoN)
-        res.redirect('/api/productos')
-    } else {
-        res.json('No hay parametros')
+    if(key===true){
+        if (Object.entries(req.body).length > 0) {
+            let productoN = new productos(req.body.nombre, req.body.descripcion, req.body.codigo, req.body.foto, req.body.precio, req.body.stock, genTimeStamp(), genID())
+            guardar(productoN)
+            // res.redirect('/productos/listar')
+            res.json('Agregado')
+        } else {
+            res.json('No hay parametros')
+        }
+    }else{
+        res.json({error:'-1', descripcion: 'ruta "/agregar" método "post" no autorizada', })
     }
+    
 
 })
 
 pRouter.put('/actualizar/:id', (req, res) => {
+    if(key===true){
     if (Object.entries(req.body).length > 0) {
         res.json(update(req.params.id, req.body.nombre, req.body.descripcion, req.body.codigo, req.body.foto, req.body.precio, req.body.stock, req.body.timeStamp))
 
     } else {
         res.json('No hay parametros')
+    }}
+    else{
+        res.json({error:'-1', descripcion: 'ruta "/actualizar/id" método "put" no autorizada', })
     }
 
-})
-pRouter.delete('/productos/borrar/:id', (req, res) => {
+    })
 
+pRouter.delete('/borrar/:id', (req, res) => {
+    if(key===true){
     res.json(del(req.params.id))
+    }else{
+        res.json({error:'-1', descripcion: 'ruta "/borarr/id" método "delete" no autorizada', })
+    }
+})
 
+pRouter.get('*', (req, res) => {
+    res.json({error:'-2', descripcion: 'ruta no implementada', })
+})
+pRouter.put('*', (req, res) => {
+    res.json({error:'-2', descripcion: 'ruta no implementada', })
+})
+pRouter.post('*', (req, res) => {
+    res.json({error:'-2', descripcion: 'ruta no implementada', })
+})
+pRouter.delete('*', (req, res) => {
+    res.json({error:'-2', descripcion: 'ruta no implementada', })
 })
 
 module.exports = pRouter;

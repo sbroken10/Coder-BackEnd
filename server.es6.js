@@ -23,11 +23,11 @@ http.listen(8080, () => {
 // app.set("views", "./views")
 
 app.use(express.static('./public'))
-
-app.use('/productos', pRoutes)
-app.use('/carrito', cRoutes)
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
+app.use('/productos', pRoutes)
+app.use('/carrito', cRoutes)
+
 
 
 app.set('socketio', io)

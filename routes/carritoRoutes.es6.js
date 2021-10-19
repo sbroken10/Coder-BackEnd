@@ -1,37 +1,76 @@
 const express = require('express')
 const cRouter = express.Router();
-const arrPro = require('../server.es6.js')
+const fs = require('fs');
 
 
-class productos {
+class productoCarrito {
 
-    constructor(a, b, c, d) {
-        this.title = a;
-        this.price = b;
-        this.thumbnail = c;
-        this.id = d;
+    constructor(producto , timeStamp, id) {
+        this.producto = producto;
+        this.timeStamp = timeStamp;
+        this.id = id;
     }
 
 };
-function genID() {
 
-    let tempID = arrPro.length + 1;
+let arrCarr = []
+let arrPro = []
+
+
+
+function readProducts() {
+    try {
+        const data = fs.readFileSync('./productos.json');
+        const json = JSON.parse(data.toString('utf-8'))
+        arrPro = json
+    } catch (err) {
+        try {
+            console.log("algo paso")
+        } catch (err) {
+            throw new Error(err)
+        }
+    }
+}
+
+function readCarrito() {
+    try {
+        const data = fs.readFileSync('./carrito.json');
+        const json = JSON.parse(data.toString('utf-8'))
+        arrCarr = json
+    } catch (err) {
+        try {
+            console.log("algo paso")
+        } catch (err) {
+            throw new Error(err)
+        }
+    }
+
+}
+
+function genID() {
+    readCarrito()
+    let tempID = arrCarr.length + 1;
     return tempID.toString()
 }
+function genTimeStamp() {
+    return Date.now();
+}
 function listarTodo() {
-    let arr2 = arrPro.map(e => { e.title 
+    readCarrito()
+    let arrTemp = arrCarr.map(e => {
         let items = {}
         items = e
         return items
     })
-    return arr2
+    return arrTemp
 }
+
 function filtarID(a) {
-
-    let proID = arrPro.find(obj => obj.id === a)
-    return proID
-
+    readCarrito()
+    let carID = arrCarr.find(obj => obj.id === a)
+    return carID
 }
+
 function exist() {
     if(arrPro.length > 0){
         return true
@@ -40,70 +79,89 @@ function exist() {
     }
     
 }
-function update(a,title,price,thumb){
-    const proIndex = arrPro.findIndex(obj => obj.id == a)
-    const copyObj = arrPro[proIndex]
-
-    copyObj.title = title
-    copyObj.price = price
-    copyObj.thumbnail = thumb
-
-    return arrPro[proIndex]
-
+function agregarCarrito(producto) {
+    try {
+        const data = fs.readFileSync('./carrito.json', 'utf-8');
+        const json = JSON.parse(data.toString('utf-8'))
+        json.push(producto)
+        try {
+            fs.writeFileSync('./carrito.json', JSON.stringify(json, null, '\t'))
+        } catch (err) {
+            throw new Error(err)
+        }
+    } catch (err) {
+        try {
+            console.log('No existe el archivo para agregar los productos, se procede a crearlo')
+            fs.writeFileSync('./carrito.json', JSON.stringify([producto]))
+        } catch (err) {
+            throw new Error(err)
+        }
+    }
 }
+
 function del (a){
     
-    const proIndex = arrPro.findIndex(obj => obj.id == a)
-    return arrPro.splice(proIndex,1)
-
+    const proIndex = arrCarr.findIndex(obj => obj.id == a)
+    let delCarr = arrCarr.splice(proIndex,1)
+    try {
+        fs.writeFileSync('./carrito.json', JSON.stringify(arrCarr, null, '\t'))
+    } catch (err) {
+        try {
+            console.log('No existe el archivo para agregar los productos, se procede a crearlo')
+        } catch (err) {
+            throw new Error(err)
+        }
+    }
+    return delCarr
+    
 }
 
-cRouter.get('/productos', (req, res, next) => {
-    console.log(arrPro)
-    var io = req.app.get('socketio');
-
-    res.render('main', {itemExist: true, arrPro: arrPro.SimpleMessage} )
+cRouter.get('/listar', (req, res) => {
+    res.json(listarTodo())
 })
 
-cRouter.get('/productos/listar/:id', (req, res, next) => {
+cRouter.get('/listar/:id', (req, res) => {
 
-    console.log(req.params.id);
     const proFilter = filtarID(req.params.id);
-    if(proFilter){
+    if (proFilter) {
         res.json(proFilter);
-    }else{
+    } else {
         res.json('Producto no encontrado');
     }
     
 })
 
 
-cRouter.post('/productos/guardar', (req, res) => {
-    console.log(req.body)
-    if (Object.entries(req.body).length > 0) {
-        
-        let productoN = new productos(req.body.title, req.body.price, req.body.thumbnail, genID())
-        arrPro.push({productoN })
-        res.redirect('/api/productos')
-    } else {
-        res.json('No hay parametros')
-    }
+cRouter.get('/agregar/:id', (req, res) => {
 
+    readProducts()
+    let proID = arrPro.find(obj => obj.id === req.params.id)
+    console.log(proID)
+    if (proID) {
+        let productoN = new productoCarrito(proID, 'c-'+genTimeStamp(), 'c-'+genID())
+        agregarCarrito(productoN)
+        // res.redirect('/productos/listar')
+        res.json('Agregado')
+    } else {
+        res.json('Producto no encontrado')
+    }
 })
 
-cRouter.put('/productos/actualizar/:id', (req, res) => {
-    if (Object.entries(req.query).length > 0) {
-        
-        res.json(update(req.params.id,req.query.title, req.query.price, req.query.thumbnail))
-    } else {
-        res.json('No hay parametros')
-    }
-
-})
-cRouter.delete('/productos/borrar/:id', (req, res) => {
-     
+cRouter.delete('/borrar/:id', (req, res) => {
         res.json(del(req.params.id))
+})
 
+cRouter.get('*', (req, res) => {
+    res.json({error:'-2', descripcion: 'ruta no implementada', })
+})
+cRouter.put('*', (req, res) => {
+    res.json({error:'-2', descripcion: 'ruta no implementada', })
+})
+cRouter.post('*', (req, res) => {
+    res.json({error:'-2', descripcion: 'ruta no implementada', })
+})
+cRouter.delete('*', (req, res) => {
+    res.json({error:'-2', descripcion: 'ruta no implementada', })
 })
 
 module.exports = cRouter;
