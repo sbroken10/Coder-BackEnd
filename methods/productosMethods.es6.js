@@ -1,11 +1,11 @@
 const fs = require('fs');
-const {options} = require('../dataBase/mariaDB.js');
+const { options } = require('../dataBase/mariaDB.js');
 const knex = require("knex")(options);
 
 
 class productos {
 
-    constructor(nombre, descripcion,stock) {
+    constructor(nombre, descripcion, stock) {
         this.nombre = nombre;
         this.categoria = descripcion;
         this.stock = stock;
@@ -14,6 +14,7 @@ class productos {
 };
 
 let arrPro = []
+let tableExist = false;
 
 function readProducts() {
     try {
@@ -106,9 +107,9 @@ function update(id, nombre, descripcion, codigo, foto, precio, stock) {
 
 function del(a) {
     readProducts()
-    const proIndex = arrPro.findIndex(obj => obj.id == a) 
-    let delPro = arrPro.splice(proIndex, 1) 
-    
+    const proIndex = arrPro.findIndex(obj => obj.id == a)
+    let delPro = arrPro.splice(proIndex, 1)
+
     try {
         fs.writeFileSync('./productos.json', JSON.stringify(arrPro, null, '\t'))
     } catch (err) {
@@ -125,33 +126,78 @@ function del(a) {
 
 
 
-function leerProductosSQL(){
-
-    knex.from('productos').select("*").then(
-        (data) => {
-                console.log(data) 
+function leerProductosSQL() {
+    return new Promise((res, rej) => {
+        try {
+            let a = []
+            knex.from('productos').select('*').then(
+                (data) => {
+                    // for(row of data)
+                    //     console.log(row['id'])
+                    a = JSON.stringify(data);
+                    outPut = JSON.parse(a.toString('utf-8'))
+                    console.log(outPut);
+                    console.log('esto es output en funcion Leer')
+                    res(outPut)
+                })
+        } catch (err) {
+            console.log(err)
         }
-    ).cath((err)=>{console.log(err); throw err}).finally(()=>{
-        knex.destroy();
     })
 };
 
-function agregarProductoSQL(producto){
+function listarSql() {
+    let outPutList = []
+    async function listarTodoSql() {
+        try {
+            const outPut = await leerProductosSQL()
+            console.log(outPut)
+            console.log('esto es output en funcion ListarTodo')
+            outPutList = outPut.map(e => {
+                let data = []
+                console.log(e)
+                console.log('esto es e')
+                data = e
+                console.log(data)
+                console.log('esto es data')
+                return data
+            })
+            console.log(outPutList)
+            console.log('esto es output list en la asyn func')
+        } catch (err) {
+            console.log(err)
+        }
+    }
+    listarTodoSql();
+    console.log(outPutList)
+    console.log('esto es output list antes del return')
+    return outPutList;
+}
 
+
+function agregarProductoSQL(producto) {
     let tableName = "productos"
-    knex.createTable(tableName, table =>{
-        table.increments("id").notNullTable();
-        table.string('nombre', 15)
-        table.strig('categoria',10)
-        table.integer('stock');
-    }).then(
-        ()=>console.log('Tabala creada'+ ' ' +tableName),
-        () =>{
-            knex(tableName).insert(producto).then(()=> console.log('articulo creado'))
-        },
-        (err) => console.log(err),
-        () => knex.destroy()
-    )
+    if (tableExist) {
+        knex(tableName).insert(producto).then(() => console.log('articulo creado'))
+    } else {
+        knex.schema.createTable(tableName, table => {
+            table.increments("id").notNullable();
+            table.string('nombre', 15)
+            table.string('categoria', 10)
+            table.integer('stock');
+        }).then(
+            () => {
+                console.log('Tabala creada' + ' ' + tableName),
+                    tableExist = true
+                console.log(tableExist)
+            },
+            () => {
+                knex(tableName).insert(producto).then(() => console.log('articulo creado'))
+            },
+            (err) => console.log(err),
+            () => knex.destroy()
+        ).catch((err) => console.log(err))
+    }
 }
 
 
@@ -162,6 +208,7 @@ module.exports = {
     // guardar,
     // filtarID,
     // listarTodo,
+    listarSql,
     genTimeStamp,
     genID,
     leerProductosSQL,
