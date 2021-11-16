@@ -14,6 +14,7 @@ class productos {
 };
 
 let arrPro = []
+let outPutList = []
 let tableExist = false;
 
 function readProducts() {
@@ -145,33 +146,26 @@ function leerProductosSQL() {
         }
     })
 };
-
-function listarSql() {
-    let outPutList = []
-    async function listarTodoSql() {
-        try {
-            const outPut = await leerProductosSQL()
-            console.log(outPut)
-            console.log('esto es output en funcion ListarTodo')
-            outPutList = outPut.map(e => {
-                let data = []
-                console.log(e)
-                console.log('esto es e')
-                data = e
-                console.log(data)
-                console.log('esto es data')
-                return data
-            })
-            console.log(outPutList)
-            console.log('esto es output list en la asyn func')
-        } catch (err) {
-            console.log(err)
-        }
+async function listarTodoSql() {
+    try {
+        const outPutTemp = await leerProductosSQL()
+        console.log(outPutTemp)
+        console.log('esto es outputTemp en funcion ListarTodo')
+        outPutList = outPut.map(e => {
+            let data = []
+            console.log(e)
+            console.log('esto es e')
+            data = e
+            console.log(data)
+            console.log('esto es data')
+            return data
+        })
+        console.log(outPutList)
+        console.log('esto es output list en la asyn func')
+        return outPutList
+    } catch (err) {
+        console.log(err)
     }
-    listarTodoSql();
-    console.log(outPutList)
-    console.log('esto es output list antes del return')
-    return outPutList;
 }
 
 
@@ -208,7 +202,7 @@ module.exports = {
     // guardar,
     // filtarID,
     // listarTodo,
-    listarSql,
+    listarTodoSql,
     genTimeStamp,
     genID,
     leerProductosSQL,

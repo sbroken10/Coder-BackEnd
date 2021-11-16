@@ -11,9 +11,9 @@ let key = true;
 //     res.render('main', {itemExist: true, arrPro: arrPro.SimpleMessage} )
 // })
 pRouter.get('/listar/', (req, res, next) => {
-    console.log(pMethods.listarSql())
+    console.log(pMethods.listarTodoSql().then((data)=>{return data}))
     console.log('esto es lo que llega')
-    res.json( pMethods.listarSql())
+    res.json( pMethods.listarTodoSql().then((data)=>{return data}))
 })
 
 pRouter.get('/listar/:id', (req, res, next) => {
