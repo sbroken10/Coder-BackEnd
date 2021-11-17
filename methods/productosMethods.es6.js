@@ -13,26 +13,25 @@ class productos {
 
 };
 
-let arrPro = []
-let outPutList = []
+// let arrPro = []
 let tableExist = false;
 
-function readProducts() {
-    try {
-        const data = fs.readFileSync('./productos.json');
-        const json = JSON.parse(data.toString('utf-8'))
-        console.log("se va a leer el archivo")
-        console.log(json)
-        arrPro = json
-    } catch (err) {
-        try {
-            console.log(["algo paso"])
-        } catch (err) {
-            throw new Error(err)
-        }
-    }
+// function readProducts() {
+//     try {
+//         const data = fs.readFileSync('./productos.json');
+//         const json = JSON.parse(data.toString('utf-8'))
+//         console.log("se va a leer el archivo")
+//         console.log(json)
+//         arrPro = json
+//     } catch (err) {
+//         try {
+//             console.log(["algo paso"])
+//         } catch (err) {
+//             throw new Error(err)
+//         }
+//     }
 
-}
+// }
 
 function genID() {
     readProducts()
@@ -42,69 +41,69 @@ function genID() {
 function genTimeStamp() {
     return Date.now();
 }
-function listarTodo() {
-    readProducts()
-    let arrTemp = arrPro.map(e => {
-        let items = {}
-        items = e
-        return items
-    })
-    return arrTemp
-}
-function filtarID(a) {
-    readProducts()
-    let proID = arrPro.find(obj => obj.id === a)
-    return proID
+// function listarTodo() {
+//     readProducts()
+//     let arrTemp = arrPro.map(e => {
+//         let items = {}
+//         items = e
+//         return items
+//     })
+//     return arrTemp
+// }
+// function filtarID(a) {
+//     readProducts()
+//     let proID = arrPro.find(obj => obj.id === a)
+//     return proID
 
-}
+// }
 
-function guardar(producto) {
-    try {
-        const data = fs.readFileSync('./productos.json', 'utf-8');
-        const json = JSON.parse(data.toString('utf-8'))
-        json.push(producto)
-        try {
-            fs.writeFileSync('./productos.json', JSON.stringify(json, null, '\t'))
-        } catch (err) {
-            throw new Error(err)
-        }
-    } catch (err) {
-        try {
-            console.log('No existe el archivo para agregar los productos, se procede a crearlo')
-            fs.writeFileSync('./productos.json', JSON.stringify([producto]))
-        } catch (err) {
-            throw new Error(err)
-        }
-    }
-}
+// function guardar(producto) {
+//     try {
+//         const data = fs.readFileSync('./productos.json', 'utf-8');
+//         const json = JSON.parse(data.toString('utf-8'))
+//         json.push(producto)
+//         try {
+//             fs.writeFileSync('./productos.json', JSON.stringify(json, null, '\t'))
+//         } catch (err) {
+//             throw new Error(err)
+//         }
+//     } catch (err) {
+//         try {
+//             console.log('No existe el archivo para agregar los productos, se procede a crearlo')
+//             fs.writeFileSync('./productos.json', JSON.stringify([producto]))
+//         } catch (err) {
+//             throw new Error(err)
+//         }
+//     }
+// }
 
-function update(id, nombre, descripcion, codigo, foto, precio, stock) {
-    readProducts()
-    const proIndex = arrPro.findIndex(obj => obj.id == id)
-    // const copyObj = arrPro[proIndex]
+// function update(id, nombre, descripcion, codigo, foto, precio, stock) {
+//     readProducts()
+//     const proIndex = arrPro.findIndex(obj => obj.id == id)
+//     // const copyObj = arrPro[proIndex]
 
-    arrPro[proIndex].nombre = nombre;
-    arrPro[proIndex].descripcion = descripcion;
-    arrPro[proIndex].codigo = codigo;
-    arrPro[proIndex].foto = foto;
-    arrPro[proIndex].precio = precio;
-    arrPro[proIndex].stock = stock;
-    arrPro[proIndex].timeStamp = genTimeStamp();
-    arrPro[proIndex].id = id;
-    // console.log(arrPro.splice(proIndex, 1, copyObj))
-    // arrPro.splice(proIndex, 1, copyObj)
-    try {
-        fs.writeFileSync('./productos.json', JSON.stringify(arrPro, null, '\t'))
-    } catch (err) {
-        try {
-            console.log('No existe el archivo para agregar los productos, se procede a crearlo')
-            fs.writeFileSync('./productos.json', JSON.stringify([{ producto }]))
-        } catch (err) {
-            throw new Error(err)
-        }
-    }
-    return arrPro[proIndex]
-}
+//     arrPro[proIndex].nombre = nombre;
+//     arrPro[proIndex].descripcion = descripcion;
+//     arrPro[proIndex].codigo = codigo;
+//     arrPro[proIndex].foto = foto;
+//     arrPro[proIndex].precio = precio;
+//     arrPro[proIndex].stock = stock;
+//     arrPro[proIndex].timeStamp = genTimeStamp();
+//     arrPro[proIndex].id = id;
+//     // console.log(arrPro.splice(proIndex, 1, copyObj))
+//     // arrPro.splice(proIndex, 1, copyObj)
+//     try {
+//         fs.writeFileSync('./productos.json', JSON.stringify(arrPro, null, '\t'))
+//     } catch (err) {
+//         try {
+//             console.log('No existe el archivo para agregar los productos, se procede a crearlo')
+//             fs.writeFileSync('./productos.json', JSON.stringify([{ producto }]))
+//         } catch (err) {
+//             throw new Error(err)
+//         }
+//     }
+//     return arrPro[proIndex]
+// }
 
 function del(a) {
     readProducts()
@@ -126,49 +125,9 @@ function del(a) {
 //KNEX MySql //
 
 
-
-function leerProductosSQL() {
-    return new Promise((res, rej) => {
-        try {
-            let a = []
-            knex.from('productos').select('*').then(
-                (data) => {
-                    // for(row of data)
-                    //     console.log(row['id'])
-                    a = JSON.stringify(data);
-                    outPut = JSON.parse(a.toString('utf-8'))
-                    console.log(outPut);
-                    console.log('esto es output en funcion Leer')
-                    res(outPut)
-                })
-        } catch (err) {
-            console.log(err)
-        }
-    })
-};
-async function listarTodoSql() {
-    try {
-        const outPutTemp = await leerProductosSQL()
-        console.log(outPutTemp)
-        console.log('esto es outputTemp en funcion ListarTodo')
-        outPutList = outPut.map(e => {
-            let data = []
-            console.log(e)
-            console.log('esto es e')
-            data = e
-            console.log(data)
-            console.log('esto es data')
-            return data
-        })
-        console.log(outPutList)
-        console.log('esto es output list en la asyn func')
-        return outPutList
-    } catch (err) {
-        console.log(err)
-    }
+function listarSQL() {
+    return knex.from('productos').select('*');
 }
-
-
 function agregarProductoSQL(producto) {
     let tableName = "productos"
     if (tableExist) {
@@ -193,20 +152,22 @@ function agregarProductoSQL(producto) {
         ).catch((err) => console.log(err))
     }
 }
+function updateSQL(idIn, nombreIn, categoriaIn, stockIn) {
 
+    knex('productos').where('id', '=', idIn).update({ categoria: categoriaIn, nombre: nombreIn, stock: stockIn }).then(console.log('Actualizado'))
+    // return knex.from('productos').select('*').where('id',idIn);
+}
+function delSQL(id) {
+    knex('productos').where('id', '=', id).del().then(console.log('Actualizado'))
+}
 
 
 module.exports = {
-    // del,
-    // update,
-    // guardar,
-    // filtarID,
-    // listarTodo,
-    listarTodoSql,
+    listarSQL,
     genTimeStamp,
     genID,
-    leerProductosSQL,
     agregarProductoSQL,
-    // readProducts,
+    updateSQL,
+    delSQL,
     productos
 }
