@@ -1,10 +1,12 @@
 const express = require('express'),
     app = express(),
-    http = require('http').Server(app),
-    io = require('socket.io')(http);
+    http = require('http').Server(app);
+    // io = require('socket.io')(http);
 const cRoutes = require('./routes/carritoRoutes.es6.js')
 const pRoutes = require('./routes/productosRoutes.es6.js')
-const fs = require('fs');
+// const fs = require('fs');
+const mongoose = require('mongoose');
+
 
 
 http.listen(8080, () => {
@@ -21,6 +23,21 @@ http.listen(8080, () => {
 // app.set("view engine", "hbs");
 // app.set("views", "./views")
 
+crud();
+
+async function crud(){
+    try{
+        const URL = 'mongodb://localhost:27017/ecommerce'
+        let rta = await mongoose.connect(URL, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        })
+        console.log('Mongo Conectado')
+    }catch(err){
+        console.log('error en la coneccion   ' + err)
+    }
+}
+
 app.use(express.static('./public'))
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
@@ -29,8 +46,7 @@ app.use('/carrito', cRoutes)
 
 
 
-app.set('socketio', io)
-
+// app.set('socketio', io)
 // app.get('/', (req, res, next) => {
 //     res.sendFile('index.html', { root: __dirname })
 // })
