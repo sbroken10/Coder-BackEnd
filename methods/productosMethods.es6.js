@@ -1,237 +1,484 @@
+const { query } = require('express');
 const fs = require('fs');
-const { options } = require('../dataBase/mariaDB.js');
-const knex = require("knex")(options);
 const mongoose = require('mongoose');
 const model = require('../models/producto.js');
+
+const persistence = 7;
 
 
 class productos {
 
-    constructor(nombre, descripcion, stock, price) {
+    constructor(nombre, descripcion, stock, price, id) {
+        this.id = id
         this.nombre = nombre;
         this.categoria = descripcion;
         this.stock = stock;
         this.price = price;
     }
+}
 
+class fileSystem {
+
+    constructor(nombreDB) {
+        this.nombre = nombreDB;
+    }
+
+    genID() {
+        let arrPro = [];
+        try {
+            const data = fs.readFileSync(`./${this.nombre}.json`);
+            const json = JSON.parse(data.toString('utf-8'))
+            console.log("se va a leer el archivo")
+            console.log(json)
+            arrPro = json
+        } catch (err) {
+            try {
+                console.log(["algo paso"])
+                return 'No se encuentra el archivo solicitado'
+            } catch (err) {
+                throw new Error(err)
+            }
+        }
+        let tempID = arrPro.length + 1;
+        return tempID.toString()
+    }
+
+    genTimeStamp() {
+        return Date.now();
+    }
+
+    agregarProducto(producto) {
+        try {
+            const data = fs.readFileSync(`./${this.nombre}.json`, 'utf-8');
+            const json = JSON.parse(data.toString('utf-8'))
+            json.push(producto)
+            try {
+                fs.writeFileSync(`./${this.nombre}.json`, JSON.stringify(json, null, '\t'))
+            } catch (err) {
+                throw new Error(err)
+            }
+        } catch (err) {
+            try {
+                console.log('No existe el archivo para agregar los productos, se procede a crearlo')
+                fs.writeFileSync(`./${this.nombre}.json`, JSON.stringify([producto]))
+            } catch (err) {
+                throw new Error(err)
+            }
+        }
+    }
+    listarTodo() {
+        let arrPro = [];
+        try {
+            const data = fs.readFileSync(`./${this.nombre}.json`);
+            const json = JSON.parse(data.toString('utf-8'))
+            console.log("se va a leer el archivo")
+            console.log(json)
+            arrPro = json
+        } catch (err) {
+            try {
+                console.log(["algo paso"])
+                return 'No se encuentra el archivo solicitado'
+            } catch (err) {
+                throw new Error(err)
+            }
+        }
+        let arrTemp = arrPro.map(e => {
+            let items = {}
+            items = e
+            return items
+        })
+        return arrTemp
+    }
+    filtarID(a) {
+        let arrPro = [];
+        try {
+            const data = fs.readFileSync(`./${this.nombre}.json`);
+            const json = JSON.parse(data.toString('utf-8'))
+            console.log("se va a leer el archivo")
+            console.log(json)
+            arrPro = json
+        } catch (err) {
+            try {
+                console.log(["algo paso"])
+            } catch (err) {
+                throw new Error(err)
+            }
+        }
+        let proID = arrPro.find(obj => obj.id === a)
+        return proID
+
+    }
+
+    update(id, name, categoria, price, stock) {
+        let arrPro = [];
+        try {
+            const data = fs.readFileSync(`./${this.nombre}.json`);
+            const json = JSON.parse(data.toString('utf-8'))
+            console.log("se va a leer el archivo")
+            console.log(json)
+            arrPro = json
+        } catch (err) {
+            try {
+                console.log(["algo paso"])
+            } catch (err) {
+                throw new Error(err)
+            }
+        }
+        const proIndex = arrPro.findIndex(obj => obj.id == id)
+        console.log('proIndex')
+        console.log(proIndex)
+        console.log('arrPro')
+        console.log(arrPro)
+        console.log('arrPro[proIndex]')
+        console.log(arrPro[proIndex])
+        arrPro[proIndex].nombre = name;
+        arrPro[proIndex].categoria = categoria;
+        arrPro[proIndex].price = price;
+        arrPro[proIndex].stock = stock;
+        arrPro[proIndex].id = id;
+        // console.log(arrPro.splice(proIndex, 1, copyObj))
+        // arrPro.splice(proIndex, 1, copyObj)
+        try {
+            fs.writeFileSync(`./${this.nombre}.json`, JSON.stringify(arrPro, null, '\t'))
+        } catch (err) {
+            try {
+                console.log('No existe el archivo para agregar los productos, se procede a crearlo')
+                fs.writeFileSync(`./${this.nombre}.json`, JSON.stringify([{ producto }]))
+            } catch (err) {
+                throw new Error(err)
+            }
+        }
+        return arrPro[proIndex]
+    }
+
+    delete(a) {
+        let arrPro = [];
+        try {
+            const data = fs.readFileSync(`./${this.nombre}.json`);
+            const json = JSON.parse(data.toString('utf-8'))
+            console.log("se va a leer el archivo")
+            console.log(json)
+            arrPro = json
+        } catch (err) {
+            try {
+                console.log(["algo paso"])
+            } catch (err) {
+                throw new Error(err)
+            }
+        }
+        const proIndex = arrPro.findIndex(obj => obj.id == a)
+        let delPro = arrPro.splice(proIndex, 1)
+
+        try {
+            fs.writeFileSync(`./${this.nombre}.json`, JSON.stringify(arrPro, null, '\t'))
+        } catch (err) {
+            try {
+                console.log('No existe el archivo para agregar los productos, se procede a crearlo')
+            } catch (err) {
+                throw new Error(err)
+            }
+        }
+        return delPro
+    }
 };
 
+class mySQL {
 
-let tableExist = false;
+    constructor(nombreDB) {
+        this.nombre = nombreDB;
+    }
 
+    agregarProducto(producto) {
+        const { options } = require('../dataBase/mariaDB.js');
+        const knex = require("knex")(options);
+        let tableName = this.nombre
+        knex.schema.hasTable(tableName).then((exist) => {
+            if (exist) {
+                knex(tableName).insert(producto).then(() => console.log('articulo creado'))
+            } else {
+                knex.schema.createTable(tableName, table => {
+                    table.increments("id").notNullable();
+                    table.string('nombre', 15)
+                    table.string('categoria', 10)
+                    table.integer('stock'),
+                        table.integer('price');
+                }).then(
+                    () => {
+                        console.log('Tabala creada' + ' ' + tableName)
+                        knex(tableName).insert(producto).then(() => console.log('articulo creado'))
+                    },
+                    (err) => console.log(err),
+                    () => knex.destroy()
+                ).catch((err) => console.log(err))
+            }
+        })
+    }
 
+    listarTodo() {
+        const { options } = require('../dataBase/mariaDB.js');
+        const knex = require("knex")(options);
+        return knex.from(this.nombre).select('*');
+    }
 
-/*----------------------------------------------------------------------------------------*/
-//                               FILE SERVER                                              //
-// let arrPro = []
-// function readProducts() {
-//     try {
-//         const data = fs.readFileSync('./productos.json');
-//         const json = JSON.parse(data.toString('utf-8'))
-//         console.log("se va a leer el archivo")
-//         console.log(json)
-//         arrPro = json
-//     } catch (err) {
-//         try {
-//             console.log(["algo paso"])
-//         } catch (err) {
-//             throw new Error(err)
-//         }
-//     }
+    filtrarID(a) {
+        const { options } = require('../dataBase/mariaDB.js');
+        const knex = require("knex")(options);
+        return knex.from(this.nombre).select('*').where('id', '=', a);
+    }
 
-// }
+    update(idIn, nombreIn, categoriaIn, stockIn) {
+        const { options } = require('../dataBase/mariaDB.js');
+        const knex = require("knex")(options);
+        knex(this.nombre).where('id', '=', idIn).update({ categoria: categoriaIn, nombre: nombreIn, stock: stockIn }).then(console.log('Actualizado'))
+        return knex.from(this.nombre).select('*').where('id', idIn);
+    }
 
-// function genID() {
-//     readProducts()
-//     let tempID = arrPro.length + 1;
-//     return tempID.toString()
-// }
-// function genTimeStamp() {
-//     return Date.now();
-// }
-// function listarTodo() {
-//     readProducts()
-//     let arrTemp = arrPro.map(e => {
-//         let items = {}
-//         items = e
-//         return items
-//     })
-//     return arrTemp
-// }
-// function filtarID(a) {
-//     readProducts()
-//     let proID = arrPro.find(obj => obj.id === a)
-//     return proID
-
-// }
-
-// function guardar(producto) {
-//     try {
-//         const data = fs.readFileSync('./productos.json', 'utf-8');
-//         const json = JSON.parse(data.toString('utf-8'))
-//         json.push(producto)
-//         try {
-//             fs.writeFileSync('./productos.json', JSON.stringify(json, null, '\t'))
-//         } catch (err) {
-//             throw new Error(err)
-//         }
-//     } catch (err) {
-//         try {
-//             console.log('No existe el archivo para agregar los productos, se procede a crearlo')
-//             fs.writeFileSync('./productos.json', JSON.stringify([producto]))
-//         } catch (err) {
-//             throw new Error(err)
-//         }
-//     }
-// }
-
-// function update(id, nombre, descripcion, codigo, foto, precio, stock) {
-//     readProducts()
-//     const proIndex = arrPro.findIndex(obj => obj.id == id)
-//     // const copyObj = arrPro[proIndex]
-
-//     arrPro[proIndex].nombre = nombre;
-//     arrPro[proIndex].descripcion = descripcion;
-//     arrPro[proIndex].codigo = codigo;
-//     arrPro[proIndex].foto = foto;
-//     arrPro[proIndex].precio = precio;
-//     arrPro[proIndex].stock = stock;
-//     arrPro[proIndex].timeStamp = genTimeStamp();
-//     arrPro[proIndex].id = id;
-//     // console.log(arrPro.splice(proIndex, 1, copyObj))
-//     // arrPro.splice(proIndex, 1, copyObj)
-//     try {
-//         fs.writeFileSync('./productos.json', JSON.stringify(arrPro, null, '\t'))
-//     } catch (err) {
-//         try {
-//             console.log('No existe el archivo para agregar los productos, se procede a crearlo')
-//             fs.writeFileSync('./productos.json', JSON.stringify([{ producto }]))
-//         } catch (err) {
-//             throw new Error(err)
-//         }
-//     }
-//     return arrPro[proIndex]
-// }
-
-// function del(a) {
-//     readProducts()
-//     const proIndex = arrPro.findIndex(obj => obj.id == a)
-//     let delPro = arrPro.splice(proIndex, 1)
-
-//     try {
-//         fs.writeFileSync('./productos.json', JSON.stringify(arrPro, null, '\t'))
-//     } catch (err) {
-//         try {
-//             console.log('No existe el archivo para agregar los productos, se procede a crearlo')
-//         } catch (err) {
-//             throw new Error(err)
-//         }
-//     }
-//     return delPro
-// }
-
-
-/*----------------------------------------------------------------------------------------*/
-//                            KNEX MySql                                                 //
-// function genID() {
-//     readProducts()
-//     let tempID = arrPro.length + 1;
-//     return tempID.toString()
-// }
-// function genTimeStamp() {
-//     return Date.now();
-// }
-// function listarSQL() {
-//     return knex.from('productos').select('*');
-// }
-// function agregarProductoSQL(producto) {
-//     let tableName = "productos"
-//     if (tableExist) {
-//         knex(tableName).insert(producto).then(() => console.log('articulo creado'))
-//     } else {
-//         knex.schema.createTable(tableName, table => {
-//             table.increments("id").notNullable();
-//             table.string('nombre', 15)
-//             table.string('categoria', 10)
-//             table.integer('stock');
-//         }).then(
-//             () => {
-//                 console.log('Tabala creada' + ' ' + tableName),
-//                     tableExist = true
-//                 console.log(tableExist)
-//             },
-//             () => {
-//                 knex(tableName).insert(producto).then(() => console.log('articulo creado'))
-//             },
-//             (err) => console.log(err),
-//             () => knex.destroy()
-//         ).catch((err) => console.log(err))
-//     }
-// }
-// function updateSQL(idIn, nombreIn, categoriaIn, stockIn) {
-
-//     knex('productos').where('id', '=', idIn).update({ categoria: categoriaIn, nombre: nombreIn, stock: stockIn }).then(console.log('Actualizado'))
-//     // return knex.from('productos').select('*').where('id',idIn);
-// }
-// function delSQL(id) {
-//     knex('productos').where('id', '=', id).del().then(console.log('Actualizado'))
-
-// module.exports = {
-//     listarSQL,
-//     genTimeStamp,
-//     genID,
-//     agregarProductoSQL,
-//     updateSQL,
-//     delSQL,
-//     productos
-// }
-// }
-
-
-
-/*----------------------------------------------------------------------------------------*/
-//                             MONGOOSE - MONGO DB                                       //
-
-
-function genID() {
-    readProducts()
-    let tempID = arrPro.length + 1;
-    return tempID.toString()
-}
-function genTimeStamp() {
-    return Date.now();
+    del(id) {
+        const { options } = require('../dataBase/mariaDB.js');
+        const knex = require("knex")(options);
+        knex(this.nombre).where('id', '=', id).del().then(console.log('Eliminado'))
+    }
 }
 
-async function listarTodoMongo() {
-    let productosList = await model.productos.find({})
-    console.log(productosList)
-    return productosList
+class SqLite3 {
+
+    constructor(nombreDB) {
+        this.nombre = nombreDB;
+    }
+
+    agregarProducto(producto) {
+        const { SQLiteOptions } = require('../dataBase/sqlite3')
+        const knex = require("knex")(SQLiteOptions);
+        let tableName = this.nombre
+        knex.schema.hasTable(tableName).then((exist) => {
+            if (exist) {
+                knex(tableName).insert(producto).then(() => console.log('articulo creado'))
+            } else {
+                knex.schema.createTable(tableName, table => {
+                    table.increments("id").notNullable();
+                    table.string('nombre', 15)
+                    table.string('categoria', 10)
+                    table.integer('stock'),
+                        table.integer('price');
+                }).then(
+                    () => {
+                        console.log('Tabala creada' + ' ' + tableName)
+                        knex(tableName).insert(producto).then(() => console.log('articulo creado'))
+                    },
+                    (err) => console.log(err),
+                    () => knex.destroy()
+                ).catch((err) => console.log(err))
+            }
+        })
+    }
+
+    listarTodo() {
+        const { SQLiteOptions } = require('../dataBase/sqlite3')
+        const knex = require("knex")(SQLiteOptions);
+        return knex.from(this.nombre).select('*');
+    }
+
+    filtrarID(a) {
+        const { SQLiteOptions } = require('../dataBase/sqlite3')
+        const knex = require("knex")(SQLiteOptions);
+        return knex.from(this.nombre).select('*').where('id', '=', a);
+    }
+
+    update(idIn, nombreIn, categoriaIn, stockIn) {
+        const { SQLiteOptions } = require('../dataBase/sqlite3')
+        const knex = require("knex")(SQLiteOptions);
+        knex(this.nombre).where('id', '=', idIn).update({ categoria: categoriaIn, nombre: nombreIn, stock: stockIn }).then(console.log('Actualizado'))
+        return knex.from(this.nombre).select('*').where('id', idIn);
+    }
+
+    del(id) {
+        const { SQLiteOptions } = require('../dataBase/sqlite3')
+        const knex = require("knex")(SQLiteOptions);
+        knex(this.nombre).where('id', '=', id).del().then(console.log('Eliminado'))
+    }
 }
 
-async function filtrarIdMongo(id){
-    let productoFilter = await model.productos.find({_id:id})
-    return productoFilter
+class mongoDB {
+
+    constructor(nombreDB) {
+        this.nombre = nombreDB;
+    }
+
+    async starter() {
+        try {
+            const URL = `mongodb://localhost:27017/${this.nombre}`
+            let rta = await mongoose.connect(URL, {
+                useNewUrlParser: true,
+                useUnifiedTopology: true
+            })
+            console.log('Mongo Conectado')
+        } catch (err) {
+            console.log('error en la coneccion   ' + err)
+        }
+    }
+
+    async agregarProducto(producto) {
+        await new model.productos({ nombre: producto.nombre, categoria: producto.categoria, stock: producto.stock, price: producto.price }).save().then(console.log('agregado'))
+    }
+
+    async listarTodo() {
+        let productosList = await model.productos.find({})
+        console.log(productosList)
+        return productosList
+    }
+
+    async filtrarID(id) {
+        let productoFilter = await model.productos.find({ _id: id })
+        return productoFilter
+    }
+
+    async update(idIn, nombreIn, categoriaIn, stockIn, priceIn) {
+        await model.productos.updateOne({ _id: idIn }, { $set: { nombre: nombreIn, categoria: categoriaIn, stock: stockIn, price: priceIn } })
+    }
+
+    async del(id) {
+        await model.productos.deleteOne({ _id: id })
+    }
 }
 
+class mongoDbAtlas {
 
-async function agregarProductoMongo(producto){
-    let newProducto = await new model.productos({nombre: producto.nombre, categoria: producto.categoria, stock: producto.stock, price:producto.price}).save().then(console.log('agregado'))
+    constructor(nombreDB) {
+        this.nombre = nombreDB;
+    }
+
+    async starter() {
+        try {
+            const URL = `mongodb+srv://root:steven10@coderhouse.n7hpz.mongodb.net/${this.nombre}?retryWrites=true&w=majority`
+            let rta = await mongoose.connect(URL, {
+                useNewUrlParser: true,
+                useUnifiedTopology: true
+            })
+            console.log('Mongo Conectado')
+        } catch (err) {
+            console.log('error en la coneccion   ' + err)
+        }
+    }
+
+    async agregarProducto(producto) {
+        await new model.productos({ nombre: producto.nombre, categoria: producto.categoria, stock: producto.stock, price: producto.price }).save().then(console.log('agregado'))
+    }
+
+    async listarTodo() {
+        let productosList = await model.productos.find({})
+        console.log(productosList)
+        return productosList
+    }
+
+    async filtrarID(id) {
+        let productoFilter = await model.productos.find({ _id: id })
+        return productoFilter
+    }
+
+    async update(idIn, nombreIn, categoriaIn, stockIn, priceIn) {
+        await model.productos.updateOne({ _id: idIn }, { $set: { nombre: nombreIn, categoria: categoriaIn, stock: stockIn, price: priceIn } })
+    }
+
+    async del(id) {
+        await model.productos.deleteOne({ _id: id })
+    }
+}
+
+class firebase {
+
+    constructor(nombreDB) {
+        this.nombre = nombreDB;
+    }
+
     
-}
-async function updateMongo(idIn, nombreIn, categoriaIn, stockIn, priceIn){
-    let productoUpdated = await model.productos.updateOne({_id:idIn}, {$set:{nombre: nombreIn, categoria: categoriaIn, stock: stockIn, price: priceIn}} )
+
+    async agregarProducto(producto) {
+        let admin = require("firebase-admin");
+        let serviceAccount = require("../coderhouse-backend-ce73f-firebase-adminsdk-s4j8u-a31955b3eb.json");
+        admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
+        const db = admin.firestore();
+        let query = db.collection(this.nombre)
+        try {
+            await query.doc().create({ nombre: producto.nombre, categoria: producto.categoria, stock: producto.stock, price: producto.price })
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    async listarTodo() {
+        var admin = require("firebase-admin");
+        var serviceAccount = require("../coderhouse-backend-ce73f-firebase-adminsdk-s4j8u-a31955b3eb.json");
+        admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
+        const db = admin.firestore();
+        let query = db.collection(this.nombre)
+        try {
+            const snapshot = await query.get()
+            let docs = snapshot.docs;
+            const productos = await docs.map((doc) => ({
+                id: doc.id,
+                nombre: doc.data().nombre,
+                categoria: doc.data().categoria,
+                stock: doc.data().stock,
+                precio: doc.data().precio
+            }))
+            console.log(productos)
+            return productos
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+
 }
 
-async function delMongo(id){
-    await model.productos.deleteOne({_id:id})
+persistenceF(persistence);
 
+function persistenceF(a) {
+    switch (a) {
+
+        case 1:
+            module.exports = {
+                fileSystem,
+                persistence,
+                productos
+            }
+            break
+        case 2:
+            module.exports = {
+                mySQL,
+                persistence,
+                productos
+            }
+            break
+        case 3:
+            module.exports = {
+                SqLite3,
+                persistence,
+                productos
+            }
+            break
+        case 5:
+            module.exports = {
+                mongoDB,
+                persistence,
+                productos
+            }
+            break
+        case 6:
+            module.exports = {
+                mongoDbAtlas,
+                persistence,
+                productos
+            }
+            break
+        case 7:
+            module.exports = {
+                firebase,
+                persistence,
+                productos
+            }
+            break
+    }
 }
-module.exports = {
-    listarTodoMongo,
-    filtrarIdMongo,
-    agregarProductoMongo,
-    updateMongo,
-    delMongo,
-    
-    productos
-}
+
+

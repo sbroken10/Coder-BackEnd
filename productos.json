@@ -1,12 +1,51 @@
 [
 	{
-		"nombre": "soul gem",
-		"descripcion": "daño magico y cd",
-		"codigo": "m1",
-		"foto": "no hay",
-		"precio": "2300",
-		"stock": "2",
-		"timeStamp": 1634336267650,
-		"id": "1"
+		"id": "No se encuentra el archivo solicitado",
+		"nombre": "mistical mail",
+		"categoria": "fisico",
+		"stock": "5",
+		"price": "200"
+	},
+	{
+		"id": "2",
+		"nombre": "mistical mail",
+		"categoria": "fisico",
+		"stock": "5",
+		"price": "200"
+	},
+	{
+		"id": "3",
+		"nombre": "mistical mail",
+		"categoria": "fisico",
+		"stock": "5",
+		"price": "200"
+	},
+	{
+		"id": "4",
+		"nombre": "mistical mail",
+		"categoria": "fisico",
+		"stock": "5",
+		"price": "200"
+	},
+	{
+		"id": "5",
+		"nombre": "mistical mail",
+		"categoria": "fisico",
+		"stock": "5",
+		"price": "200"
+	},
+	{
+		"id": "6",
+		"nombre": "mistical mail",
+		"categoria": "fisico",
+		"stock": "5",
+		"price": "200"
+	},
+	{
+		"id": "7",
+		"nombre": "mistical mail",
+		"categoria": "fisico",
+		"stock": "5",
+		"price": "200"
 	}
 ]
