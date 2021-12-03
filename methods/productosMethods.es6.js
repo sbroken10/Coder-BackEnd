@@ -2,6 +2,7 @@ const { query } = require('express');
 const fs = require('fs');
 const mongoose = require('mongoose');
 const model = require('../models/producto.js');
+const fireDb = require('../dataBase/firebase.js')
 
 const persistence = 7;
 
@@ -390,31 +391,25 @@ class firebase {
         this.nombre = nombreDB;
     }
 
-    
+
 
     async agregarProducto(producto) {
-        let admin = require("firebase-admin");
-        let serviceAccount = require("../coderhouse-backend-ce73f-firebase-adminsdk-s4j8u-a31955b3eb.json");
-        admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
-        const db = admin.firestore();
+        const db = fireDb.admin.firestore();
         let query = db.collection(this.nombre)
         try {
-            await query.doc().create({ nombre: producto.nombre, categoria: producto.categoria, stock: producto.stock, price: producto.price })
+            await query.doc().create({ nombre: producto.nombre, categoria: producto.categoria, stock: producto.stock, precio: producto.price })
         } catch (err) {
             console.log(err)
         }
     }
 
     async listarTodo() {
-        var admin = require("firebase-admin");
-        var serviceAccount = require("../coderhouse-backend-ce73f-firebase-adminsdk-s4j8u-a31955b3eb.json");
-        admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
-        const db = admin.firestore();
+        const db = fireDb.admin.firestore();
         let query = db.collection(this.nombre)
         try {
             const snapshot = await query.get()
             let docs = snapshot.docs;
-            const productos = await docs.map((doc) => ({
+            const productos = docs.map((doc) => ({
                 id: doc.id,
                 nombre: doc.data().nombre,
                 categoria: doc.data().categoria,
@@ -423,6 +418,42 @@ class firebase {
             }))
             console.log(productos)
             return productos
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    async filtrarID(id) {
+        const db = fireDb.admin.firestore();
+        let query = db.collection(this.nombre)
+        try {
+            const doc = query.doc(`${id}`);
+            let item = await doc.get();
+            let res = item.data();
+            return res;
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    async update(idIn, nombreIn, categoriaIn, stockIn, priceIn) {
+        const db = fireDb.admin.firestore();
+        let query = db.collection(this.nombre)
+        try {
+            const doc = query.doc(`${idIn}`);
+            await doc.update({ nombre: nombreIn, categoria: categoriaIn, stock: stockIn, precio: priceIn });
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    async del(id) {
+        const db = fireDb.admin.firestore();
+        let query = db.collection(this.nombre)
+        try {
+            const doc = query.doc(`${id}`);
+            let item = await doc.delete();
+            return item
         } catch (err) {
             console.log(err)
         }

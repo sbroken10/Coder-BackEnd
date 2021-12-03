@@ -31,7 +31,7 @@ pRouter.get('/listar/', (req, res) => {
             break
         case 7:
             let firebase = new pMethods.firebase('productos')
-            res.json(firebase.listarTodo())
+            firebase.listarTodo().then((data) => res.json(data))
             break
     }
 });
@@ -81,6 +81,10 @@ pRouter.get('/listar/:id', (req, res, next) => {
             } else {
                 res.json('Ingrese el ID');
             }
+            break
+        case 7:
+            let firebase = new pMethods.firebase('productos')
+            firebase.filtrarID(req.params.id).then((data) => res.json(data))
             break
 
     }
@@ -240,6 +244,19 @@ pRouter.put('/actualizar/:id', (req, res) => {
                 res.json({ error: '-1', descripcion: 'ruta "/actualizar/id" método "put" no autorizada', })
             }
             break
+        case 7:
+            let firebase = new pMethods.firebase('productos')
+            if (key === true) {
+                if (Object.entries(req.body).length > 0) {
+                    firebase.update(req.params.id, req.body.nombre, req.body.categoria, req.body.stock, req.body.price)
+                    res.json('Actualizado')
+                } else {
+                    res.json('No hay parametros')
+                }
+            } else {
+                res.json({ error: '-1', descripcion: 'ruta "/actualizar/id" método "put" no autorizada', })
+            }
+            break
     }
 
 
@@ -283,6 +300,15 @@ pRouter.delete('/borrar/:id', (req, res) => {
             atlas.starter();
             if (key === true) {
                 atlas.del(req.params.id)
+                res.json(`Eliminado Producto ID ${req.params.id}`)
+            } else {
+                res.json({ error: '-1', descripcion: 'ruta "/borarr/id" método "delete" no autorizada', })
+            }
+            break
+        case 7:
+            let firebase = new pMethods.firebase('productos')
+            if (key === true) {
+                firebase.del(req.params.id)
                 res.json(`Eliminado Producto ID ${req.params.id}`)
             } else {
                 res.json({ error: '-1', descripcion: 'ruta "/borarr/id" método "delete" no autorizada', })
