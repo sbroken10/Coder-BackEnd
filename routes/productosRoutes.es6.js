@@ -2,7 +2,10 @@ const { response } = require('express');
 const express = require('express')
 const pRouter = express.Router();
 const pMethods = require('../methods/productosMethods.es6.js')
+const api = require('../fakeApi/productos-fake.js')
 let key = true;
+
+pRouter.get('/vista-test/:cant?', api.generar)
 
 pRouter.get('/listar/', (req, res) => {
 
