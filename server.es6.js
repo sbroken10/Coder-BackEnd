@@ -1,10 +1,15 @@
 const express = require('express'),
     app = express(),
     http = require('http').Server(app);
-const cRoutes = require('./routes/carritoRoutes.es6.js')
-const pRoutes = require('./routes/productosRoutes.es6.js')
-const handlebars = require ('express-handlebars')
-const session = require('express-session')
+const cRoutes = require('./routes/carritoRoutes.es6.js');
+const pRoutes = require('./routes/productosRoutes.es6.js');
+const handlebars = require('express-handlebars');
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
+const advancedOptions = {
+    useNewUrlParser: true,
+    useUnifiedTopology:true
+}
 
 
 http.listen(8080, () => {
@@ -21,7 +26,11 @@ app.set("view engine", "hbs");
 app.set("views", "./views")
 
 app.use(session({
-    secret: 'secreto',
+    store: MongoStore.create({
+        mongoUrl: `mongodb+srv://root:steven10@coderhouse.n7hpz.mongodb.net/ecommerce?retryWrites=true&w=majority`,
+        mongoOptions: advancedOptions
+    }),
+    secret: 'steven10',
     resave: true,
     saveUninitialized: true
 }));

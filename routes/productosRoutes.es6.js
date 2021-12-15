@@ -11,7 +11,13 @@ const api = require('../fakeApi/productos-fake.js')
 let key = true;
 
 pRouter.get('/login', (req, res) => {
-        res.render('main', {} )
+        console.log(req.session.user)
+        if(req.session.user){
+            req.session.logState = true;
+            res.render('main', {usuario: req.session.user, status: req.session.logState})
+        }else{
+            res.render('main', {})
+        }    
 })
 
 pRouter.post('/login', (req, res) => {
