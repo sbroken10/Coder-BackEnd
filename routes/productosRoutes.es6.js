@@ -3,7 +3,35 @@ const express = require('express')
 const pRouter = express.Router();
 const pMethods = require('../methods/productosMethods.es6.js')
 const api = require('../fakeApi/productos-fake.js')
+
+// https://github.com/VeraManuel/project-nodejs-mysql-hbs
+
+// https://github.com/VeraManuel/project-nodejs-mysql-hbs/blob/master/src/views/auth/signup.hbs
+
 let key = true;
+
+pRouter.get('/login', (req, res) => {
+        res.render('main', {} )
+})
+
+pRouter.post('/login', (req, res) => {
+
+    if (req.body.user == "coder" && req.body.password == "house"){
+        req.session.logState = true;
+        req.session.user = "coder";
+        res.render('main' , {usuario: req.session.user, status: req.session.logState})
+    }else{
+        req.session.logState = false;
+        req.session.fail = true
+        res.render('main' ,{status: req.session.logState, fail: req.session.fail})
+        
+    }
+})
+pRouter.get('/logout', (req, res) => {
+    let lastUser = req.session.user
+    req.session.destroy();
+    res.render('main', {usuario: lastUser, status: false} )
+})
 
 pRouter.get('/vista-test/:cant?', api.generar)
 
@@ -324,18 +352,18 @@ pRouter.delete('/borrar/:id', (req, res) => {
 
 
 
-pRouter.get('*', (req, res) => {
-    res.json({ error: '-2', descripcion: 'ruta no implementada', })
-})
-pRouter.put('*', (req, res) => {
-    res.json({ error: '-2', descripcion: 'ruta no implementada', })
-})
-pRouter.post('*', (req, res) => {
-    res.json({ error: '-2', descripcion: 'ruta no implementada', })
-})
-pRouter.delete('*', (req, res) => {
-    res.json({ error: '-2', descripcion: 'ruta no implementada', })
-})
+// pRouter.get('*', (req, res) => {
+//     res.json({ error: '-2', descripcion: 'ruta no implementada', })
+// })
+// pRouter.put('*', (req, res) => {
+//     res.json({ error: '-2', descripcion: 'ruta no implementada', })
+// })
+// // pRouter.post('*', (req, res) => {
+// //     res.json({ error: '-2', descripcion: 'ruta no implementada', })
+// // })
+// pRouter.delete('*', (req, res) => {
+//     res.json({ error: '-2', descripcion: 'ruta no implementada', })
+// })
 
 module.exports = pRouter;
 
