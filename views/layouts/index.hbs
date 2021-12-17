@@ -12,6 +12,14 @@
 </head>
 
 <body>
+    {{#if SingMessage}}
+        <div>
+        <p>{{SingMessage}}</p>
+        {{>singup}}
+        {{>singin}}  
+    </div>
+    {{else}}
+
     {{#if status}}
     <div>
         {{>loged}}
@@ -19,16 +27,20 @@
     {{else}}
         {{#if usuario}}
                 {{>logout}}
-                {{>login}} 
+                {{>singup}} 
+                {{>singin}}
             {{else}}
                 {{#if fail}}
                     {{>fail-Login}} 
-                    {{>login}} 
+                    {{>singup}}
+                    {{>singin}} 
                 {{else}}
-                    {{>login}} 
+                    {{>singup}}
+                    {{>singin}}  
                 {{/if}}
             {{/if}}
 
+    {{/if}}
     {{/if}}
 
     {{>form}}

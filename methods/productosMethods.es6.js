@@ -4,7 +4,8 @@ const mongoose = require('mongoose');
 const model = require('../models/producto.js');
 const fireDb = require('../dataBase/firebase.js')
 
-const persistence = 7;
+const persistence = 6;
+
 
 
 class productos {
@@ -367,7 +368,6 @@ class mongoDbAtlas {
 
     async listarTodo() {
         let productosList = await model.productos.find({})
-        console.log(productosList)
         return productosList
     }
 
@@ -511,5 +511,3 @@ function persistenceF(a) {
             break
     }
 }
-
-

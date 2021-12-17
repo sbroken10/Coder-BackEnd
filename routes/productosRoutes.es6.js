@@ -1,43 +1,8 @@
-const { response } = require('express');
+// const { response } = require('express');
 const express = require('express')
 const pRouter = express.Router();
-const pMethods = require('../methods/productosMethods.es6.js')
-const api = require('../fakeApi/productos-fake.js')
-
-// https://github.com/VeraManuel/project-nodejs-mysql-hbs
-
-// https://github.com/VeraManuel/project-nodejs-mysql-hbs/blob/master/src/views/auth/signup.hbs
-
-let key = true;
-
-pRouter.get('/login', (req, res) => {
-        console.log(req.session.user)
-        if(req.session.user){
-            req.session.logState = true;
-            res.render('main', {usuario: req.session.user, status: req.session.logState})
-        }else{
-            res.render('main', {})
-        }    
-})
-
-pRouter.post('/login', (req, res) => {
-
-    if (req.body.user == "coder" && req.body.password == "house"){
-        req.session.logState = true;
-        req.session.user = "coder";
-        res.render('main' , {usuario: req.session.user, status: req.session.logState})
-    }else{
-        req.session.logState = false;
-        req.session.fail = true
-        res.render('main' ,{status: req.session.logState, fail: req.session.fail})
-        
-    }
-})
-pRouter.get('/logout', (req, res) => {
-    let lastUser = req.session.user
-    req.session.destroy();
-    res.render('main', {usuario: lastUser, status: false} )
-})
+const pMethods = require('../methods/productosMethods.es6')
+const api = require('../fakeApi/productos-fake')
 
 pRouter.get('/vista-test/:cant?', api.generar)
 
@@ -63,7 +28,6 @@ pRouter.get('/listar/', (req, res) => {
             break
         case 6:
             let atlas = new pMethods.mongoDbAtlas('ecommerce')
-            atlas.starter();
             atlas.listarTodo().then((data) => res.json(data))
             break
         case 7:
@@ -112,7 +76,6 @@ pRouter.get('/listar/:id', (req, res, next) => {
             break
         case 6:
             let atlas = new pMethods.mongoDbAtlas('ecommerce')
-            atlas.starter();
             if (req.params) {
                 atlas.filtrarID(req.params.id).then((data) => res.json(data));
             } else {
@@ -184,7 +147,6 @@ pRouter.post('/agregar', (req, res) => {
             break
         case 6:
             let atlas = new pMethods.mongoDbAtlas('ecommerce')
-            atlas.starter();
             if (key === true) {
                 if (Object.entries(req.body).length > 0) {
                     let productoN = new pMethods.productos(req.body.nombre, req.body.categoria, req.body.stock, req.body.price)
@@ -268,7 +230,6 @@ pRouter.put('/actualizar/:id', (req, res) => {
             break
         case 6:
             let atlas = new pMethods.mongoDbAtlas('ecommerce')
-            atlas.starter();
             if (key === true) {
                 if (Object.entries(req.body).length > 0) {
                     atlas.update(req.params.id, req.body.nombre, req.body.categoria, req.body.stock, req.body.price);
@@ -334,7 +295,6 @@ pRouter.delete('/borrar/:id', (req, res) => {
             break
         case 6:
             let atlas = new pMethods.mongoDbAtlas('ecommerce')
-            atlas.starter();
             if (key === true) {
                 atlas.del(req.params.id)
                 res.json(`Eliminado Producto ID ${req.params.id}`)
