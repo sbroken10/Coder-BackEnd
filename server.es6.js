@@ -19,6 +19,7 @@ const app = express()
 const http = require('http').Server(app);
 require('./dataBase/atlas')
 require('./passport/local-auth')
+require('./passport/facebook-auth')
 
 //Settings
 http.listen(8080, () => {
