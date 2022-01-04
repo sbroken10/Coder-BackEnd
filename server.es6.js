@@ -81,6 +81,10 @@ app.get('/info', (req, res) =>{
     
     res.send(process.memoryUsage())
 })
+app.get('/', (req, res) =>{
+    
+    res.send('Funciona 1')
+})
 
 
 
