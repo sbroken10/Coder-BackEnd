@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "serverES6toJS5": "npx babel server.es6.js -o server.js -w",
     "routesToJs5": "npx babel ./routes/routes.es6.js -o ./routes/routes.js -w",
-    "start": "nodemon server.es6.js"
+    "start": "node server.es6.js"
   },
   "author": "",
   "license": "ISC",
