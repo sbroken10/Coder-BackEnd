@@ -1,6 +1,7 @@
 const passport = require('passport')
 const facebookStrategy = require('passport-facebook').Strategy;
 const findOrCreate = require('mongoose-findorcreate')
+const logger = require('../winston/log-service')
 
 const UserN = require('../models/usuarios')
 
@@ -17,7 +18,7 @@ passport.use('facebook', new facebookStrategy({
     clientSecret: 'c3e133124aaf0c2a6a1ac0fcd536a04b',
     callbackURL : '/usuario/home',
 }, function (token, refreshToken, profile, done){
-    console.log(profile);
+    logger.log('info', profile);
     done(null, profile)
 }))
 
