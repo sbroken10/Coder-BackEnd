@@ -1,4 +1,5 @@
 //Modules
+// const compression = require('compression');
 const express = require('express')
 const handlebars = require('express-handlebars');
 const session = require('express-session');
@@ -11,6 +12,10 @@ const advancedOptions = {
 }
 const flash = require('connect-flash');
 const cookie = require('cookie-parser');
+const logger = require('./winston/log-service')
+
+
+
 
 
 
@@ -58,6 +63,7 @@ app.use((req, res, next )=>{
     next();
 })
 
+
 //Routes
 const cRoutes = require('./routes/carritoRoutes.es6');
 const pRoutes = require('./routes/productosRoutes.es6.js');
@@ -68,6 +74,13 @@ const uRoutes = require('./routes/usuarioRoutes.es6')
 app.use('/productos', pRoutes)
 app.use('/carrito', cRoutes)
 app.use('/usuario', uRoutes)
+
+//Info
+
+app.get('/info', (req, res) =>{
+    
+    res.send(process.memoryUsage())
+})
 
 
 

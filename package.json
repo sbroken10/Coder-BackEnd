@@ -21,10 +21,12 @@
     "cookie-parser": "^1.4.6",
     "express": "^4.17.1",
     "express-handlebars": "^5.3.3",
+    "express-pino-logger": "^7.0.0",
     "express-session": "^1.17.2",
     "faker": "^5.5.3",
     "firebase-admin": "^10.0.0",
     "fs": "^0.0.1-security",
+    "gzip": "^0.1.0",
     "handlebars": "^4.7.7",
     "http": "^0.0.1-security",
     "jquery": "^3.6.0",
@@ -36,8 +38,10 @@
     "passport": "^0.5.0",
     "passport-facebook": "^3.0.0",
     "passport-local": "^1.0.0",
+    "pino-pretty": "^7.3.0",
     "socket.io": "^4.2.0",
-    "sqlite3": "^4.2.0"
+    "sqlite3": "^4.2.0",
+    "winston": "^3.3.3"
   },
   "engines": {
     "node": ">=14.0.0",

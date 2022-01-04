@@ -3,7 +3,7 @@ const fs = require('fs');
 const mongoose = require('mongoose');
 const model = require('../models/producto.js');
 const fireDb = require('../dataBase/firebase.js')
-
+const logger = require('../winston/log-service')
 const persistence = 6;
 
 
@@ -30,12 +30,12 @@ class fileSystem {
         try {
             const data = fs.readFileSync(`./${this.nombre}.json`);
             const json = JSON.parse(data.toString('utf-8'))
-            console.log("se va a leer el archivo")
-            console.log(json)
+            logger.info("se va a leer el archivo")
+            logger.info(json)
             arrPro = json
         } catch (err) {
             try {
-                console.log(["algo paso"])
+                logger.info(["algo paso"])
                 return 'No se encuentra el archivo solicitado'
             } catch (err) {
                 throw new Error(err)
@@ -356,9 +356,9 @@ class mongoDbAtlas {
                 useNewUrlParser: true,
                 useUnifiedTopology: true
             })
-            console.log('Mongo Conectado')
+            logger.log('info', 'Mongo Conectado')
         } catch (err) {
-            console.log('error en la coneccion   ' + err)
+            logger.log('error', 'error en la coneccion   ' + err)
         }
     }
 
@@ -368,6 +368,7 @@ class mongoDbAtlas {
 
     async listarTodo() {
         let productosList = await model.productos.find({})
+        logger.log('warn', 'se cargaron los productos')
         return productosList
     }
 
@@ -399,7 +400,7 @@ class firebase {
         try {
             await query.doc().create({ nombre: producto.nombre, categoria: producto.categoria, stock: producto.stock, precio: producto.price })
         } catch (err) {
-            console.log(err)
+            logger.log('error', err)
         }
     }
 
@@ -416,10 +417,11 @@ class firebase {
                 stock: doc.data().stock,
                 precio: doc.data().precio
             }))
-            console.log(productos)
+            logger.log('info', productos)
+            logger.log('warning', productos)
             return productos
         } catch (err) {
-            console.log(err)
+            logger.log('error', err)
         }
     }
 
@@ -432,7 +434,7 @@ class firebase {
             let res = item.data();
             return res;
         } catch (err) {
-            console.log(err)
+            logger.log('error', err)
         }
     }
 
@@ -443,7 +445,7 @@ class firebase {
             const doc = query.doc(`${idIn}`);
             await doc.update({ nombre: nombreIn, categoria: categoriaIn, stock: stockIn, precio: priceIn });
         } catch (err) {
-            console.log(err)
+            logger.log('error', err)
         }
     }
 
@@ -455,7 +457,7 @@ class firebase {
             let item = await doc.delete();
             return item
         } catch (err) {
-            console.log(err)
+            logger.log('error', err)
         }
     }
 
