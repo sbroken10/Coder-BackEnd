@@ -28,7 +28,7 @@ require('./passport/facebook-auth')
 
 //Settings
 http.listen(8080, () => {
-    console.log("servidor en el puerto 8080")
+    console.log("servidor en el puerto Heroku")
 });
 app.engine("hbs", handlebars({
     extname: "hbs",
