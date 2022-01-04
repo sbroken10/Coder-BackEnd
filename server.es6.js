@@ -27,7 +27,7 @@ require('./passport/local-auth')
 require('./passport/facebook-auth')
 
 //Settings
-http.listen(8080, () => {
+http.listen((process.env.PORT || 8000), () => {
     console.log("servidor en el puerto 8080")
 });
 app.engine("hbs", handlebars({
