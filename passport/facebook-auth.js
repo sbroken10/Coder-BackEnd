@@ -18,6 +18,8 @@ passport.use('facebook', new facebookStrategy({
     clientSecret: 'c3e133124aaf0c2a6a1ac0fcd536a04b',
     callbackURL : '/usuario/home',
 }, function (token, refreshToken, profile, done){
+    console.log(profile.id)
+    logger.log('info', profile.id)
     logger.log('info', profile);
     done(null, profile)
 }))
