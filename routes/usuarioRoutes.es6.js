@@ -9,7 +9,7 @@ const flash = require('connect-flash');
 
 //Facebook
 
-uRouter.get('/auth/facebook', passport.authenticate('facebook', { scope : 'email' }));
+uRouter.get('/auth/facebook', passport.authenticate('facebook'));
 
 uRouter.get('/facebook/callback',
     passport.authenticate('facebook', {
