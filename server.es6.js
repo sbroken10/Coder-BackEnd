@@ -83,7 +83,7 @@ app.get('/info', (req, res) =>{
 })
 app.get('/', (req, res) =>{
     
-    res.send('comp 11:02PM')
+    res.send('comp 11:31PM')
 })
 
 
