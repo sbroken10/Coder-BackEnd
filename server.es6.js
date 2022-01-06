@@ -68,12 +68,14 @@ app.use((req, res, next )=>{
 const cRoutes = require('./routes/carritoRoutes.es6');
 const pRoutes = require('./routes/productosRoutes.es6.js');
 const uRoutes = require('./routes/usuarioRoutes.es6')
+const chRoutes = require('./routes/chatRoutes')
 
 
 
 app.use('/productos', pRoutes)
 app.use('/carrito', cRoutes)
 app.use('/usuario', uRoutes)
+app.use('/chat', chRoutes)
 
 //Info
 
@@ -82,8 +84,11 @@ app.get('/info', (req, res) =>{
     res.send(process.memoryUsage())
 })
 app.get('/', (req, res) =>{
-    
-    res.send('comp 11:56PM')
+    if(req.session.email){
+        res.redirect('/productos/')
+    }else{
+        res.redirect('/usuario/home')
+    }
 })
 
 

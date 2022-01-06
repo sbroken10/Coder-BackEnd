@@ -6,7 +6,7 @@ const api = require('../fakeApi/productos-fake')
 
 pRouter.get('/vista-test/:cant?', api.generar)
 
-pRouter.get('/listar/', (req, res) => {
+pRouter.get('/', (req, res) => {
 
     switch (pMethods.persistence) {
         case 1:

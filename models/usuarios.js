@@ -5,8 +5,14 @@ const {Schema} = mongoose;
 const usuarioCollection = 'users';
 
 const usuarioSchema = new Schema({
-    user:{type: String, require: true, max:30},
-    password:{type: String, require: true},
+    email:{type: String},
+    password:{type: String},
+    direccion:{type: String},
+    nombre:{type: String},
+    edad:{type: Number},
+    prefijo:{type: Number},
+    telefono:{type: Number},
+    foto:{type: String},
 })
 usuarioSchema.methods.encryptPassword = (password) =>{
     return bcrypt.hashSync(password, bcrypt.genSaltSync(10));
