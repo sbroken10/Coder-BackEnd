@@ -1,118 +1,100 @@
-const fs = require('fs');
+const logger = require('../winston/log-service')
+const model = require('../models/orders')
+const { transporterGmail } = require('../nodeMail/confing');
+const { sms } = require('../twilio/config.js');
 
-class productoCarrito {
 
-    constructor(producto , timeStamp, id) {
-        this.producto = producto;
-        this.timeStamp = timeStamp;
-        this.id = id;
+
+let arrCarr = []
+let storedItem = null
+
+
+class Carrito {
+    constructor(items) {
+        this.carrito = items.productos || {};
+        this.TotalPrice = 0;
+        this.ItemQnty = 0;
+
+
+    }
+
+    agregar(item, id) {
+
+        if (!storedItem) {
+            storedItem = this.carrito[id] = { producto: item, cantidad: 0, precio: 0 };
+            storedItem.cantidad++;
+            storedItem.precio = storedItem.producto.price * storedItem.cantidad;
+            arrCarr.push(storedItem);
+            ;
+        } else if (storedItem.producto._id == id) {
+            storedItem.cantidad++;
+            storedItem.precio = storedItem.producto.price * storedItem.cantidad;
+
+        } else {
+            storedItem = this.carrito[id] = { producto: item, cantidad: 0, precio: 0 };
+            storedItem.cantidad++;
+            storedItem.precio = storedItem.producto.price * storedItem.cantidad;
+            arrCarr.push(storedItem);
+
+        }
+    }
+
+    async completarCompra(usuario) {
+        await new model.order({
+            usuario: usuario,
+            carrito: arrCarr,
+            date: Date.now()
+        }).save((err, order) => {
+            if (err) {
+                logger.log('error', err)
+            }
+            let arrCarrString = JSON.stringify(arrCarr);
+            let arrCarrFinal = JSON.parse(arrCarrString)          
+            transporterGmail.sendMail({
+                from: 'Back End Ecommerce Coderhouse',
+                to: 'stivenpedraza_12@hotmail.com',
+                subject: `Nuevo pedido de ${usuario.nombre}`,
+                html: `<h1>Pedido ${order._id}</h1>
+                        <ul>
+                        <li>Usuario</li>
+                        <li>Nombre: ${usuario.nombre}</li>
+                        <li>e-Mail:${usuario.email}</li>
+                        <li>Telefono:+${usuario.prefijo} ${usuario.telefono}</li>
+                        <li>Direccion:${usuario.direccion}</li>
+                        </ul>
+                        <h2>Orden</h2>
+                        ${arrCarrString}
+                        `
+            }, (err, info) => {
+                if (err) {
+                    logger.log('err', err);
+                } logger.log('info', info);
+            })
+            let number = `+${usuario.prefijo}${usuario.telefono}`
+            console.log(number)
+            sms.messages.create({
+                body:`Pedido ${order._id}                
+                Usuario
+                Nombre: ${usuario.nombre}
+                e-Mail:${usuario.email}
+                Telefono:+${usuario.prefijo} ${usuario.telefono}
+                Direccion:${usuario.direccion}
+                Orden
+                ${arrCarrString}`,
+                from: 'whatsapp:+14155238886',
+                to: `whatsapp:${number}`
+            }).then(message => logger.log('info', message.sid)).catch((err)=>logger.log('error', err))
+            sms.messages.create({
+                body: `Su pedido fue recibido con exito`,
+                from: '+12674406874',
+                to: `+${usuario.prefijo}${usuario.telefono}`
+            }).then(message => logger.log('info', message.sid)).catch((err)=>logger.log('error', err))
+        })
     }
 
 };
-
-let arrCarr = []
-let arrPro = []
-
-
-
-function readProducts() {
-    try {
-        const data = fs.readFileSync('./productos.json');
-        const json = JSON.parse(data.toString('utf-8'))
-        arrPro = json
-    } catch (err) {
-        try {
-            console.log("algo paso")
-        } catch (err) {
-            throw new Error(err)
-        }
-    }
-}
-
-function readCarrito() {
-    try {
-        const data = fs.readFileSync('./carrito.json');
-        const json = JSON.parse(data.toString('utf-8'))
-        arrCarr = json
-    } catch (err) {
-        try {
-            console.log("algo paso")
-        } catch (err) {
-            throw new Error(err)
-        }
-    }
-
-}
-
-function genID() {
-    readCarrito()
-    let tempID = arrCarr.length + 1;
-    return tempID.toString()
-}
-function genTimeStamp() {
-    return Date.now();
-}
-function listarTodo() {
-    readCarrito()
-    let arrTemp = arrCarr.map(e => {
-        let items = {}
-        items = e
-        return items
-    })
-    return arrTemp
-}
-
-function filtarID(a) {
-    readCarrito()
-    let carID = arrCarr.find(obj => obj.id === a)
-    return carID
-}
-
-function agregarCarrito(producto) {
-    try {
-        const data = fs.readFileSync('./carrito.json', 'utf-8');
-        const json = JSON.parse(data.toString('utf-8'))
-        json.push(producto)
-        try {
-            fs.writeFileSync('./carrito.json', JSON.stringify(json, null, '\t'))
-        } catch (err) {
-            throw new Error(err)
-        }
-    } catch (err) {
-        try {
-            console.log('No existe el archivo para agregar los productos, se procede a crearlo')
-            fs.writeFileSync('./carrito.json', JSON.stringify([producto]))
-        } catch (err) {
-            throw new Error(err)
-        }
-    }
-}
-
-function del (a){
-    
-    const proIndex = arrCarr.findIndex(obj => obj.id == a)
-    let delCarr = arrCarr.splice(proIndex,1)
-    try {
-        fs.writeFileSync('./carrito.json', JSON.stringify(arrCarr, null, '\t'))
-    } catch (err) {
-        try {
-            console.log('No existe el archivo para agregar los productos, se procede a crearlo')
-        } catch (err) {
-            throw new Error(err)
-        }
-    }
-    return delCarr
-    
-}
-
 module.exports = {
-    del,
-    agregarCarrito,
-    filtarID,
-    listarTodo,
-    genTimeStamp,
-    genID,
-    readProducts,
-    readCarrito, 
-    productoCarrito
+    Carrito,
+    arrCarr,
+
 }

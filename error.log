@@ -1,0 +1,11 @@
+{"level":"error","message":"no se ha iniciado sesion o existe un problema con la session","timestamp":"2022-01-08T19:46:29.182Z"}
+{"level":"error","message":"no se ha iniciado sesion o existe un problema con la session","timestamp":"2022-01-08T21:09:59.244Z"}
+{"level":"error","message":"error","timestamp":"2022-01-09T18:34:45.676Z"}
+{"code":21910,"level":"error","moreInfo":"https://www.twilio.com/docs/errors/21910","status":400,"timestamp":"2022-01-09T18:35:48.997Z"}
+{"code":21910,"level":"error","moreInfo":"https://www.twilio.com/docs/errors/21910","status":400,"timestamp":"2022-01-09T18:53:56.056Z"}
+{"code":21910,"level":"error","moreInfo":"https://www.twilio.com/docs/errors/21910","status":400,"timestamp":"2022-01-09T18:58:18.334Z"}
+{"code":21212,"level":"error","moreInfo":"https://www.twilio.com/docs/errors/21212","status":400,"timestamp":"2022-01-09T22:15:01.387Z"}
+{"code":21212,"level":"error","moreInfo":"https://www.twilio.com/docs/errors/21212","status":400,"timestamp":"2022-01-09T22:21:28.922Z"}
+{"code":21211,"level":"error","moreInfo":"https://www.twilio.com/docs/errors/21211","status":400,"timestamp":"2022-01-09T22:23:00.779Z"}
+{"code":21211,"level":"error","moreInfo":"https://www.twilio.com/docs/errors/21211","status":400,"timestamp":"2022-01-09T22:25:50.255Z"}
+{"code":21212,"level":"error","moreInfo":"https://www.twilio.com/docs/errors/21212","status":400,"timestamp":"2022-01-09T22:26:43.993Z"}
