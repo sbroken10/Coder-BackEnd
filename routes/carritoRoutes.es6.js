@@ -3,9 +3,8 @@ const cRouter = express.Router();
 const cMethods = require('../methods/carritoMethods.es6.js')
 const modelP = require('../models/producto');
 const modelU = require('../models/usuarios');
-const modelO = require('../models/orders')
 const logger = require('../winston/log-service.js');
-const { sms } = require('../twilio/config.js');
+
 
 
 

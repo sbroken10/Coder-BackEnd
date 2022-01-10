@@ -2,13 +2,12 @@
 const express = require('express')
 const pRouter = express.Router();
 const pMethods = require('../methods/productosMethods.es6')
-const api = require('../fakeApi/productos-fake')
+const dotenv = require('dotenv').config();
 
-pRouter.get('/vista-test/:cant?', api.generar)
 
 pRouter.get('/', (req, res) => {
 
-    switch (pMethods.persistence) {
+    switch (process.env.PERSISTENCE) {
         case 1:
             let FS = new pMethods.fileSystem('productos')
             res.json(FS.listarTodo());
@@ -39,7 +38,7 @@ pRouter.get('/', (req, res) => {
 
 pRouter.get('/listar/:id', (req, res, next) => {
 
-    switch (pMethods.persistence) {
+    switch (process.env.PERSISTENCE) {
         case 1:
             let FS = new pMethods.fileSystem('productos')
             const proFilter = FS.filtarID(req.params.id);
@@ -77,7 +76,13 @@ pRouter.get('/listar/:id', (req, res, next) => {
         case 6:
             let atlas = new pMethods.mongoDbAtlas('ecommerce')
             if (req.params) {
-                atlas.filtrarID(req.params.id).then((data) => res.json(data));
+                atlas.filtrarID(req.params.id).then((data) =>{
+                    if(data === false){
+                        res.send('El objeto ID no existe')
+                    }else{
+                        res.json(data)
+                    }
+                    });
             } else {
                 res.json('Ingrese el ID');
             }
@@ -92,7 +97,7 @@ pRouter.get('/listar/:id', (req, res, next) => {
 
 pRouter.post('/agregar', (req, res) => {
 
-    switch (pMethods.persistence) {
+    switch (process.env.PERSISTENCE) {
         case 1:
             let FS = new pMethods.fileSystem('productos');
             let productoN = new pMethods.productos(req.body.nombre, req.body.categoria, req.body.stock, req.body.price, FS.genID());
@@ -182,7 +187,7 @@ pRouter.post('/agregar', (req, res) => {
 })
 
 pRouter.put('/actualizar/:id', (req, res) => {
-    switch (pMethods.persistence) {
+    switch (process.env.PERSISTENCE) {
         case 1:
             let FS = new pMethods.fileSystem('productos');
             res.json(FS.update(req.params.id, req.body.nombre, req.body.categoria, req.body.stock, req.body.price));
@@ -261,7 +266,7 @@ pRouter.put('/actualizar/:id', (req, res) => {
 })
 
 pRouter.delete('/borrar/:id', (req, res) => {
-    switch (pMethods.persistence) {
+    switch (process.env.PERSISTENCE) {
         case 1:
             let FS = new pMethods.fileSystem('productos');
             res.json(FS.delete(req.params.id));

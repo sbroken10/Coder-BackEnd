@@ -71,7 +71,6 @@ class Carrito {
                 } logger.log('info', info);
             })
             let number = `+${usuario.prefijo}${usuario.telefono}`
-            console.log(number)
             sms.messages.create({
                 body:`Pedido ${order._id}                
                 Usuario

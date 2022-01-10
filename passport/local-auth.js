@@ -2,7 +2,6 @@ const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy;
 const { transporterGmail } = require('../nodeMail/confing')
 const logger = require('../winston/log-service')
-
 const UserN = require('../models/usuarios')
 
 passport.serializeUser((user, done) => {
@@ -68,10 +67,7 @@ passport.use('singIn', new LocalStrategy({
     passwordField: 'password',
     passReqToCallback: true
 }, async (req, email, password, done) => {
-    console.log(email)
-    console.log(password)
     let valUser = await UserN.usuarios.findOne({ email: email }).exec()
-    console.log(valUser)
     if (!valUser) {
         done(null, false, req.flash('SingMessage', 'Usuario no encontrado'));
     } else if (!valUser.comparePassword(password)) {

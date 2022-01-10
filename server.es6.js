@@ -11,8 +11,8 @@ const advancedOptions = {
     useUnifiedTopology: true
 }
 const flash = require('connect-flash');
-const cookie = require('cookie-parser');
 const logger = require('./winston/log-service')
+const dotenv = require('dotenv').config();
 
 
 
@@ -28,7 +28,7 @@ require('./passport/facebook-auth')
 
 //Settings
 http.listen((process.env.PORT || 8080), () => {
-    console.log("servidor en el puerto 8080")
+    logger.log('info',"servidor en el puerto 8080")
 });
 app.engine("hbs", handlebars({
     extname: "hbs",
@@ -43,10 +43,10 @@ app.set("views", "./views")
 
 app.use(session({
     store: MongoStore.create({
-        mongoUrl: `mongodb+srv://root:steven10@coderhouse.n7hpz.mongodb.net/ecommerce?retryWrites=true&w=majority`,
+        mongoUrl: process.env.MONGOURL,
         mongoOptions: advancedOptions
     }),
-    secret: 'steven10',
+    secret: process.env.MONGOSECRET,
     cookie: {maxAge: 60000},
     resave: false,
     saveUninitialized: false

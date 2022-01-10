@@ -4,7 +4,8 @@ const mongoose = require('mongoose');
 const model = require('../models/producto.js');
 const fireDb = require('../dataBase/firebase.js')
 const logger = require('../winston/log-service')
-const persistence = 6;
+const dotenv = require('dotenv').config();
+
 
 
 
@@ -373,8 +374,15 @@ class mongoDbAtlas {
     }
 
     async filtrarID(id) {
-        let productoFilter = await model.productos.find({ _id: id })
-        return productoFilter
+        try{
+            let productoFilter = await model.productos.find({ _id: id })
+            return productoFilter
+        }catch{
+            let state = false
+            return state
+        }
+            
+        
     }
 
     async update(idIn, nombreIn, categoriaIn, stockIn, priceIn) {
@@ -464,7 +472,7 @@ class firebase {
 
 }
 
-persistenceF(persistence);
+persistenceF(process.env.PERSISTENCE);
 
 function persistenceF(a) {
     switch (a) {
