@@ -1,5 +1,4 @@
 //Modules
-// const compression = require('compression');
 const express = require('express')
 const handlebars = require('express-handlebars');
 const session = require('express-session');
@@ -13,11 +12,6 @@ const advancedOptions = {
 const flash = require('connect-flash');
 const logger = require('./winston/log-service')
 const dotenv = require('dotenv').config();
-
-
-
-
-
 
 //Initializations
 const app = express()
@@ -69,13 +63,16 @@ const cRoutes = require('./routes/carritoRoutes.es6');
 const pRoutes = require('./routes/productosRoutes.es6.js');
 const uRoutes = require('./routes/usuarioRoutes.es6')
 const chRoutes = require('./routes/chatRoutes')
+const FeRoutes = require('./routes/frontEndLoginRoutes')
 
 
+app.use('/api/productos', pRoutes)
+app.use('/api/carrito', cRoutes)
+app.use('/api/usuario', uRoutes)
+app.use('/api/chat', chRoutes)
+app.use('/api/', FeRoutes)
 
-app.use('/productos', pRoutes)
-app.use('/carrito', cRoutes)
-app.use('/usuario', uRoutes)
-app.use('/chat', chRoutes)
+
 
 //Info
 
@@ -85,9 +82,9 @@ app.get('/info', (req, res) =>{
 })
 app.get('/', (req, res) =>{
     if(req.session.email){
-        res.redirect('/productos/')
+        res.redirect('/api/productos/')
     }else{
-        res.redirect('/usuario/home')
+        res.redirect('/api/usuario/home')
     }
 })
 

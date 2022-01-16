@@ -31,7 +31,7 @@ cRouter.get('/agregar/:id', (req, res) => {
         if (err) {
             res.redirect('/')
         }
-        cart.agregar(product, product.id)
+        cart.agregar(product, product.id) 
         req.session.cart = cMethods.arrCarr
         logger.log('info', 'esto es el req.session.cart------>')
         logger.log('info', req.session.cart)
@@ -49,12 +49,12 @@ cRouter.get('/checkout', (req, res) => {
             }
             if (req.session.cart) {
                 let cart = new cMethods.Carrito(req.session.cart);
-                cart.completarCompra(user)               
+                cart.completarCompra(user)
                 res.send(req.session.cart)
             } else {
                 res.send('/')
             }
-        }).sort({date:-1})
+        }).sort({ date: -1 })
     } else {
         logger.log('error', 'no se ha iniciado sesion o existe un problema con la session')
         res.redirect('/')

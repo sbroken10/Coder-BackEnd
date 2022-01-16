@@ -3,6 +3,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const { transporterGmail } = require('../nodeMail/confing')
 const logger = require('../winston/log-service')
 const UserN = require('../models/usuarios')
+const {FeUsuarios} = require('../models/FEUsers')
 
 passport.serializeUser((user, done) => {
     done(null, user.id);
@@ -79,6 +80,35 @@ passport.use('singIn', new LocalStrategy({
             to: 'stivenpedraza_12@hotmail.com',
             subject: 'Usuario Logeado',
             html: `<h1>Usuario loggeado ${req.session.email}</h1>`
+        }, (err, info) => {
+            if (err) {
+                logger.log('err', err);
+            } logger.log('info', info);
+        })
+        done(null, valUser)
+    }
+}))
+
+passport.use('FEsingIn', new LocalStrategy({
+    usernameField: 'email',
+    passwordField: 'password',
+    passReqToCallback: true
+}, async (req, email, password, done) => {
+    let valUser = await FeUsuarios.findOne({ email: email }).exec()
+    if (!valUser) {
+        logger.log('info', 'no se encuentra el usuario')
+        done(null, false, req.flash('SingMessage', 'Usuario no encontrado'));
+    } else if (valUser.password !== password) {
+        logger.log('info', 'la contraseña no coincide')
+        done(null, false, req.flash('SingMessage', 'Usuario o contraseña incorrectos'))
+    } else {
+        logger.log('info', 'entro a la validacion')
+        req.session.FrontEndEmail = valUser.email
+        transporterGmail.sendMail({
+            from: 'Back End Ecommerce Coderhouse',
+            to: 'stivenpedraza_12@hotmail.com',
+            subject: 'Usuario Logeado',
+            html: `<h1>Usuario loggeado ${req.session.FrontEndEmail}</h1>`
         }, (err, info) => {
             if (err) {
                 logger.log('err', err);
