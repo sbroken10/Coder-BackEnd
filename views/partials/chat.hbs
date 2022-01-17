@@ -1,10 +1,40 @@
-<div id="chatBox">
+<div>
+    <div id="chatRender">
 
+    </div>
+    <div id="chatBox" class="formContainer">
+        <form action="/api/chat/" method="post">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" id="mensaje" name="mensaje">
+                <input type="submit" class="btn btn-dark btnCustom" value="Enviar" id="messageButton">
+            </div>
+
+        </form>
+    </div>
 </div>
+<script type="text/html" id="template-chat">
+            <div>
+                {{#each messages}}
+                    <p class="date"><strong class="email">{{this.usr}} </strong> [{{this.date}}] <i class="msg"> {{this.msg}} </i> </p>
+                {{/each}}
+            </div>
+</script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const socket = io();
-        
-    }
+        const msgB = document.getElementById("messageButton")
+        const chatRender = document.getElementById('chatRender')
+        const template = document.getElementById('template-chat')
+        msgB.addEventListener("click", function () {
 
+            let da = new Date();
+            socket.emit("chat", { msg: message })
+        })
+        socket.on('message', (data) => {
+            chatLogs = data
+            console.log(chatLogs)
+            const chatTemplate = Handlebars.compile(template.innerHTML)
+            chatRender.innerHTML = chatTemplate({ messages: chatLogs })
+        })
+    }
 </script>

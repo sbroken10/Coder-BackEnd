@@ -12,10 +12,12 @@ const advancedOptions = {
 const flash = require('connect-flash');
 const logger = require('./winston/log-service')
 const dotenv = require('dotenv').config();
+const chat = require('./methods/chatMethods')
 
 //Initializations
 const app = express()
 const http = require('http').Server(app);
+const io = require('socket.io')(http)
 require('./dataBase/atlas')
 require('./passport/local-auth')
 require('./passport/facebook-auth')
@@ -32,6 +34,7 @@ app.engine("hbs", handlebars({
 }))
 app.set("view engine", "hbs");
 app.set("views", "./views")
+app.set('socket.io', io)
 
 //Middlewares
 
@@ -88,6 +91,18 @@ app.get('/', (req, res) =>{
     }
 })
 
+//webSocket
+
+io.on('connection', (socket) => {
+    logger.log('info', "socketID ---------------------------------------------------------->");
+    logger.log('info', socket.id);
+    let mensajes = new chMethods.mongoDbAtlas(1);
+    mensajes.listarTodo().then((data) => socket.emit('constant', data));
+    socket.on('chat', data => {
+        logger.log('info', data)
+        mensajes.listarTodo().then((data) => io.emit('message', data));
+    })
+});
 
 
 

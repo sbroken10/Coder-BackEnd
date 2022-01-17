@@ -47,8 +47,8 @@ uRouter.get('/profile', (req, res) => {
 //singUp - Register User
 
 uRouter.post('/singup', passport.authenticate('singUp', {
-    successRedirect: '/usuario/home',
-    failureRedirect: '/usuario/home',
+    successRedirect: '/api/usuario/home',
+    failureRedirect: '/api/usuario/home',
     passReqToCallback: true,
 }))
 
@@ -64,8 +64,8 @@ uRouter.get('/singin', (req, res) => {
 })
 
 uRouter.post('/singin', passport.authenticate('singIn', {
-    successRedirect: '/usuario/profile',
-    failureRedirect: '/usuario/home',
+    successRedirect: '/api/usuario/profile',
+    failureRedirect: '/api/usuario/home',
     passReqToCallback: true,
 }))
 
