@@ -51,9 +51,9 @@ uRouter.post('/singup', passport.authenticate('singUp', {
 uRouter.get('/singin', (req, res) => {
     if (req.session.email) {
         req.session.logState = true;
-        res.sendFile(path.join(__dirname,'../resources','login.html'))
+        res.sendFile(path.join(__dirname,'../resources','logIn.html'))
     } else {
-        res.sendFile(path.join(__dirname,'../resources','login.html'))
+        res.sendFile(path.join(__dirname,'../resources','logIn.html'))
     }
 })
 
