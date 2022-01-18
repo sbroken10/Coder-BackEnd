@@ -10,6 +10,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const chatRender = document.getElementById("chatRender")
     const msg = document.getElementById("messageImput");
     const msgB = document.getElementById("messageButton")
+    const loged = document.getElementById("loged")
+    const renLoged = document.getElementById("renderLoged")
 
     msg.addEventListener("keyup", function (e) {
         message = e.target.value
@@ -24,6 +26,8 @@ document.addEventListener("DOMContentLoaded", function () {
     socket.on('productos', (data) => {
         const template = Handlebars.compile(myTemplate.innerHTML)
         render.innerHTML = template({ itemExist: true, productos: data.arrPro })
+        const logedTemplate = Handlebars.compile(loged.innerHTML)
+        renLoged.innerHTML = logedTemplate({usuario: data.user})
     })
     socket.on('message', (data) => {
 

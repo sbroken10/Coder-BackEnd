@@ -22,7 +22,6 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http)
 require('./dataBase/atlas')
 require('./passport/local-auth')
-require('./passport/facebook-auth')
 
 //Settings
 http.listen((process.env.PORT || 8080), () => {
@@ -100,26 +99,23 @@ app.get('/', (req, res) => {
             logger.log('info', socket.id);
             let mensajes = new chMethods.mongoDbAtlas(1);
             mensajes.listarTodo().then((data) => socket.emit('message', data));
-            socket.on('chat', data1 => {
-                console.log(data1.msj)
-                let arrMSG = data1.arr
-                console.log(arrMSG)
-                arrMSG.push({id: 'DM', user: req.session.email, mensaje: data1.msj})
-                logger.log('info', "finMsg ----------------------------------------------------------------------------------------------->");
-                console.log(arrMSG)
-                io.emit('message', arrMSG)
-            })
             let atlas = new pMethods.mongoDbAtlas('ecommerce')
             let productos = ''
+            let user = req.session.email
             atlas.listarTodo().then((data) => {
                 productos = data;
                 let proData = JSON.stringify(data);
                 productos = JSON.parse([proData])
-                io.emit('productos', { user: req.session.email, state: true, arrPro: productos, itemExist: true })
+                io.emit('productos', { user: user, state: true, arrPro: productos, itemExist: true })
             })
-
-
+            socket.on('chat', data1 => {
+                let arrMSG = data1.arr
+                arrMSG.push({id: 'DM', user: user, mensaje: data1.msj})
+                logger.log('info', "finMsg ----------------------------------------------------------------------------------------------->");
+                io.emit('message', arrMSG)
+            })
         })
+        
         res.redirect('/api/usuario/profile')
     } else {
         res.redirect('/api/usuario/home')

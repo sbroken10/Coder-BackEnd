@@ -17,6 +17,16 @@
 </head>
 
 <body>
+    <script type="text/html" id="loged">
+        <div class="formContainer">
+            <div class="input-group mb-3">
+                <form action="/api/usuario/logout/" method="get">
+                    <span class="input-group-text spanContainer1">Bienvenido {{ usuario }}</span>
+                    <input type="submit" class="btn btn-dark btnCustom" value="Log-Out">
+                </form>
+            </div>
+        </div>
+    </script>
     <script type="text/html" id="template">
         {{#if itemExist}}
         <table class="table table-striped">
@@ -47,6 +57,8 @@
                 {{/each}}
             </div>
     </script>
+    <div id="renderLoged">
+    </div>
     <div id="render">
     </div>
     <hr>
@@ -54,7 +66,7 @@
         <h1>Chat Box</h1>
         <div>
             <div id="chatRender">
-        
+
             </div>
             <div id="chatBox" class="formContainer">
                 <form action="/api/chat" method="post">
@@ -62,7 +74,7 @@
                         <input type="text" class="form-control" id="messageImput" name="mensaje">
                         <input type="submit" class="btn btn-dark btnCustom" value="Enviar" id="messageButton">
                     </div>
-        
+
                 </form>
             </div>
         </div>
@@ -73,4 +85,5 @@
         crossorigin="anonymous"></script>
 
 </body>
+
 </html>

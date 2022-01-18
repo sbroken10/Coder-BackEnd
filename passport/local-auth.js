@@ -36,7 +36,7 @@ passport.use('singUp', new LocalStrategy({
             await userTemp.save();
             transporterGmail.sendMail({
                 from: 'Back End Ecommerce Coderhouse',
-                to: 'stivenpedraza_12@hotmail.com',
+                to: email,
                 subject: 'Nuevo Usuario Registrado',
                 html: `<h1>Nuevo Usuario</h1>
                         <ul>

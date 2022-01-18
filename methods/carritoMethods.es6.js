@@ -8,7 +8,6 @@ const { sms } = require('../twilio/config.js');
 let arrCarr = []
 let storedItem = null
 
-
 class Carrito {
     constructor(items) {
         this.carrito = items.productos || {};

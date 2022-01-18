@@ -11,14 +11,6 @@ const usuarioSchema = new Schema({
     prefijo:{type: Number},
     telefono:{type: Number},
 })
-// usuarioSchema.methods.encryptPassword = (password) =>{
-//     return bcrypt.hashSync(password, bcrypt.genSaltSync(10));
-// }
-
-// usuarioSchema.methods.comparePassword = function(password){
-//     return bcrypt.compareSync(password, this.password) 
-// }
-
 const FeUsuarios = mongoose.model(FEusuarioCollection, usuarioSchema);
 
 module.exports = {

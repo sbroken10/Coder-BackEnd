@@ -35,7 +35,7 @@ class mongoDbAtlas {
     }
 
     async agregarProducto(producto) {
-        await new model.productos({ nombre: producto.nombre, categoria: producto.categoria, stock: producto.stock, price: producto.price }).save().then(console.log('agregado'))
+        await new model.productos({ nombre: producto.nombre, categoria: producto.categoria, stock: producto.stock, price: producto.price }).save().then(logger.log('info', 'agregado'))
     }
 
     async listarTodo() {

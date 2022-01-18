@@ -11,7 +11,7 @@ frontEndRouter.get('/login', (req, res) =>{
 
 frontEndRouter.post('/login', passport.authenticate('FEsingIn', {
     successRedirect: '/api/success',
-    failureRedirect: '/usuario/home',
+    failureRedirect: '/api/usuario/home',
     passReqToCallback: true,
 }))
 
@@ -28,7 +28,7 @@ frontEndRouter.get('/success', (req, res) =>{
 frontEndRouter.get('/test', verifyToken, (req, res) =>{
     jwt.verify(req.session.token, 'steven10', (err, authData) => {
         if(err){
-            res.send('forbiden')
+            res.status(403)
         }else{
             res.json({
                 mensaje:'echo', 

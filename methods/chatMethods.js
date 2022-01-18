@@ -26,7 +26,6 @@ class mongoDbAtlas {
                 from: '+12674406874',
                 to: '+573203792289'
             })
-
             await new model.mensajes({ user: user, mensaje: msj}).save().then(logger.log('info', 'agregado con palabra admin'))
         }else{
             await new model.mensajes({ user: user, mensaje: msj}).save().then(logger.log('info', 'agregado'))

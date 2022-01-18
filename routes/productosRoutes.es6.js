@@ -81,18 +81,18 @@ pRouter.delete('/borrar/:id', (req, res) => {
     }
 })
 
-// pRouter.get('*', (req, res) => {
-//     res.json({ error: '-2', descripcion: 'ruta no implementada', })
-// })
-// pRouter.put('*', (req, res) => {
-//     res.json({ error: '-2', descripcion: 'ruta no implementada', })
-// })
-// // pRouter.post('*', (req, res) => {
-// //     res.json({ error: '-2', descripcion: 'ruta no implementada', })
-// // })
-// pRouter.delete('*', (req, res) => {
-//     res.json({ error: '-2', descripcion: 'ruta no implementada', })
-// })
+pRouter.get('*', (req, res) => {
+    res.json({ error: '-2', descripcion: 'ruta no implementada', })
+})
+pRouter.put('*', (req, res) => {
+    res.json({ error: '-2', descripcion: 'ruta no implementada', })
+})
+pRouter.post('*', (req, res) => {
+    res.json({ error: '-2', descripcion: 'ruta no implementada', })
+})
+pRouter.delete('*', (req, res) => {
+    res.json({ error: '-2', descripcion: 'ruta no implementada', })
+})
 
 module.exports = pRouter;
 
