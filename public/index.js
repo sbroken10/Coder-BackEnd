@@ -95,11 +95,10 @@ document.addEventListener("DOMContentLoaded", function () {
         const template = Handlebars.compile(myTemplate.innerHTML)
         render.innerHTML = template({ itemExist: true, arrPro: arrPro })
     })
-    socket.on('updateMessage', (data) => {
-        console.log(data)
+    socket.on('message', (data) => {
         chatLogs = data
         console.log(chatLogs)
-        const chatTemplate = Handlebars.compile(templateChat.innerHTML)
+        const chatTemplate = Handlebars.compile(template.innerHTML)
         chatRender.innerHTML = chatTemplate({ messages: chatLogs })
     })
 })

@@ -4,6 +4,7 @@ const passport = require('passport')
 const flash = require('connect-flash');
 const { transporterGmail } = require('../nodeMail/confing')
 const logger = require('../winston/log-service')
+const path = require('path')
 
 // https://github.com/VeraManuel/project-nodejs-mysql-hbs
 
@@ -25,9 +26,10 @@ uRouter.get('/facebook/callback',
 uRouter.get('/home', (req, res) => {
     if (req.session.email) {
         req.session.logState = true;
-        res.render('main', { usuario: req.session.email, status: req.session.logState })
+        res.sendFile(path.join(__dirname,'../resources','index.html'))
+        // res.render('main', { usuario: req.session.email, status: req.session.logState })
     } else {
-        res.render('main', {})
+        res.sendFile(path.join(__dirname,'../resources','index.html'))
     }
 })
 
@@ -36,19 +38,31 @@ uRouter.get('/home', (req, res) => {
 uRouter.get('/profile', (req, res) => {
     logger.log('info', req.session.email)
     if (req.session.email) {
-        req.session.logState = true;
-        logger.log('info', req.session.email)
-        res.render('main', { usuario: req.session.email, status: req.session.logState })
+        res.sendFile(path.join(__dirname,'../resources','indexProductos.html'))
+        // req.session.logState = true;
+        // logger.log('info', req.session.email)
+        // res.render('main', { usuario: req.session.email, status: req.session.logState })
     } else {
-        res.render('main', {})
+        res.sendFile(path.join(__dirname,'../resources','indexProductos.html'))
     }
 })
 
 //singUp - Register User
 
+uRouter.get('/singup', (req, res) => {
+    if (req.session.email) {
+        req.session.logState = true;
+        res.sendFile(path.join(__dirname,'../resources','singup.html'))
+        // res.render('main', { usuario: req.session.email, status: req.session.logState })
+    } else {
+        res.sendFile(path.join(__dirname,'../resources','singup.html'))
+        // res.render('main', {})
+    }
+})
+
 uRouter.post('/singup', passport.authenticate('singUp', {
-    successRedirect: '/api/usuario/home',
-    failureRedirect: '/api/usuario/home',
+    successRedirect: '/',
+    failureRedirect: '/',
     passReqToCallback: true,
 }))
 
@@ -57,15 +71,17 @@ uRouter.post('/singup', passport.authenticate('singUp', {
 uRouter.get('/singin', (req, res) => {
     if (req.session.email) {
         req.session.logState = true;
-        res.render('main', { usuario: req.session.email, status: req.session.logState })
+        res.sendFile(path.join(__dirname,'../resources','login.html'))
+        // res.render('main', { usuario: req.session.email, status: req.session.logState })
     } else {
-        res.render('main', {})
+        res.sendFile(path.join(__dirname,'../resources','login.html'))
+        // res.render('main', {})
     }
 })
 
 uRouter.post('/singin', passport.authenticate('singIn', {
-    successRedirect: '/api/usuario/profile',
-    failureRedirect: '/api/usuario/home',
+    successRedirect: '/',
+    failureRedirect: '/',
     passReqToCallback: true,
 }))
 

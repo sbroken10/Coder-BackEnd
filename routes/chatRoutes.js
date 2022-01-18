@@ -2,7 +2,7 @@ const express = require('express')
 const chatRouter = express.Router();
 const chMethods = require('../methods/chatMethods.js');
 const logger = require('../winston/log-service')
-const io = require('socket.io')
+
 
 
 
@@ -23,7 +23,7 @@ chatRouter.post('/', (req, res) => {
         let tempUser = req.session.email
         mensaje.agregarMensaje(tempUser, req.body.mensaje)
         
-        res.redirect('/api/usuario/home')
+        res.redirect('/api/usuario/profile')
     } else {
         res.send('Modulo exclusivo para Usuarios registrados, ingrese su usuario')
     }
