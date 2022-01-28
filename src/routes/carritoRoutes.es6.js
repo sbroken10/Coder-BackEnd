@@ -8,21 +8,6 @@ const logger = require('../winston/log-service.js');
 
 
 
-
-cRouter.get('/listar', (req, res) => {
-    res.json(cMethods.listarTodo())
-})
-
-cRouter.get('/listar/:id', (req, res) => {
-
-    const proFilter = cMethods.filtarID(req.params.id);
-    if (proFilter) {
-        res.json(proFilter);
-    } else {
-        res.json('Producto no encontrado');
-    }
-
-})
 cRouter.get('/agregar/:id', (req, res) => {
 
     let proID = req.params.id
@@ -35,8 +20,17 @@ cRouter.get('/agregar/:id', (req, res) => {
         req.session.cart = cMethods.arrCarr
         logger.log('info', 'esto es el req.session.cart------>')
         logger.log('info', req.session.cart)
-        res.redirect('/productos')
+        res.redirect('/api/productos')
     })
+})
+
+cRouter.get('/listar', (req, res) => {
+    if(req.session.cart){
+        res.send(req.session.cart)
+    }else {
+        logger.log('error', 'No hay items en el carrito')
+        res.redirect('/')
+    }
 })
 
 
@@ -52,7 +46,7 @@ cRouter.get('/checkout', (req, res) => {
                 cart.completarCompra(user)
                 res.send(req.session.cart)
             } else {
-                res.send('/')
+                res.redirect('/')
             }
         }).sort({ date: -1 })
     } else {
@@ -60,10 +54,16 @@ cRouter.get('/checkout', (req, res) => {
         res.redirect('/')
     }
 
+    
 })
 
 cRouter.delete('/borrar/:id', (req, res) => {
-    res.json(del(req.params.id))
+    let newCart = req.session.cart;
+    let index = newCart.indexOf(req.params.id);
+    if(req.session.cart) {
+        newCart.splice(index, 1)
+    }
+    res.redirect('/api/carrito/listar')
 })
 
 cRouter.get('*', (req, res) => {

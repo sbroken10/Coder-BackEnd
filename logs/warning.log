@@ -1,0 +1,14 @@
+{"level":"warn","message":"se cargaron los productos","timestamp":"2022-01-28T19:25:09.636Z"}
+{"level":"warn","message":"se cargaron los productos","timestamp":"2022-01-28T19:25:39.137Z"}
+{"level":"warn","message":"se cargaron los productos","timestamp":"2022-01-28T19:25:41.962Z"}
+{"level":"warn","message":"se cargaron los productos","timestamp":"2022-01-28T19:25:52.523Z"}
+{"level":"warn","message":"se cargaron los productos","timestamp":"2022-01-28T19:26:02.555Z"}
+{"level":"error","message":"No hay items en el carrito","timestamp":"2022-01-28T20:32:08.737Z"}
+{"level":"warn","message":"se cargaron los productos","timestamp":"2022-01-28T20:32:29.692Z"}
+{"code":20003,"level":"error","moreInfo":"https://www.twilio.com/docs/errors/20003","status":401,"timestamp":"2022-01-28T20:33:12.715Z"}
+{"code":20003,"level":"error","moreInfo":"https://www.twilio.com/docs/errors/20003","status":401,"timestamp":"2022-01-28T20:33:12.720Z"}
+{"level":"warn","message":"se cargaron los productos","timestamp":"2022-01-28T20:36:49.120Z"}
+{"level":"warn","message":"se cargaron los productos","timestamp":"2022-01-28T20:36:50.893Z"}
+{"level":"warn","message":"se cargaron los productos","timestamp":"2022-01-28T20:36:53.096Z"}
+{"code":20003,"level":"error","moreInfo":"https://www.twilio.com/docs/errors/20003","status":401,"timestamp":"2022-01-28T20:36:59.195Z"}
+{"code":20003,"level":"error","moreInfo":"https://www.twilio.com/docs/errors/20003","status":401,"timestamp":"2022-01-28T20:36:59.201Z"}

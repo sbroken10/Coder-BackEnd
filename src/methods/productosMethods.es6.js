@@ -58,7 +58,7 @@ class mongoDbAtlas {
 
     async filtrarCategoria(id) {
         try{
-            let categoriaFilter = await model.productos.find({ categiria: id })
+            let categoriaFilter = await model.productos.find({ categoria: id })
             return categoriaFilter
         }catch{
             let state = false

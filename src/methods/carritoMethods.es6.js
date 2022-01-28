@@ -39,16 +39,18 @@ class Carrito {
     }
 
     async completarCompra(usuario) {
+        let today = new Date();
+        var date = `${today.getDate()}:${today.getMonth()+1}:${today.getFullYear()}`
         await new model.order({
             usuario: usuario,
             carrito: arrCarr,
-            date: Date.now()
+            date: date
         }).save((err, order) => {
             if (err) {
                 logger.log('error', err)
             }
-            let arrCarrString = JSON.stringify(arrCarr);
-            let arrCarrFinal = JSON.parse(arrCarrString)          
+            logger.log('info', 'se agrego la orden')
+            let arrCarrString = JSON.stringify(arrCarr);      
             transporterGmail.sendMail({
                 from: 'Back End Ecommerce Coderhouse',
                 to: 'stivenpedraza_12@hotmail.com',

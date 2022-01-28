@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-    console.log('loaded')
     const socket = io();
     let arrMSG = []
     let chatLogs = []

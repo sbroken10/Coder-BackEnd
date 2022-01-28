@@ -25,18 +25,4 @@ frontEndRouter.get('/success', (req, res) =>{
     })
 })
 
-frontEndRouter.get('/test', verifyToken, (req, res) =>{
-    jwt.verify(req.session.token, 'steven10', (err, authData) => {
-        if(err){
-            res.status(403)
-        }else{
-            res.json({
-                mensaje:'echo', 
-                authData: authData
-            })
-        }
-    })
-})
-
-
 module.exports = frontEndRouter

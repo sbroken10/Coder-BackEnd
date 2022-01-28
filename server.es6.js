@@ -10,18 +10,18 @@ const advancedOptions = {
     useUnifiedTopology: true
 }
 const flash = require('connect-flash');
-const logger = require('./winston/log-service')
+const logger = require('./src/winston/log-service')
 const dotenv = require('dotenv').config();
-const chMethods = require('./methods/chatMethods.js');
-const pMethods = require('./methods/productosMethods.es6')
+const chMethods = require('./src/methods/chatMethods.js');
+const pMethods = require('./src/methods/productosMethods.es6')
 const path = require('path')
 
 //Initializations
 const app = express()
 const http = require('http').Server(app);
 const io = require('socket.io')(http)
-require('./dataBase/atlas')
-require('./passport/local-auth')
+require('./src/dataBase/atlas')
+require('./src/passport/local-auth')
 
 //Settings
 http.listen((process.env.PORT || 8080), () => {
@@ -34,7 +34,7 @@ app.engine("hbs", handlebars({
     partialsDir: __dirname + "/views/partials"
 }))
 app.set("view engine", "hbs");
-app.set("views", "./views")
+app.set("views", "./src/views")
 app.set('socket.io', io)
 
 //Middlewares
@@ -45,7 +45,7 @@ app.use(session({
         mongoOptions: advancedOptions
     }),
     secret: process.env.MONGOSECRET,
-    cookie: { maxAge: 60000 },
+    cookie: { maxAge: 600000 },
     resave: false,
     saveUninitialized: false
 }));
@@ -60,22 +60,16 @@ app.use((req, res, next) => {
     app.locals.SingMessage = req.flash('SingMessage');
     next();
 })
-// app.use(function(req, res, next) {
-//     res.status(404);
-//     res.send('404: File Not Found');
-// });
-// app.use(function(req, res, next) {
-//     res.status(403);
-//     res.send('403: Forbiden');
-// });
+
 
 
 //Routes
-const cRoutes = require('./routes/carritoRoutes.es6');
-const pRoutes = require('./routes/productosRoutes.es6.js');
-const uRoutes = require('./routes/usuarioRoutes.es6')
-const chRoutes = require('./routes/chatRoutes')
-const FeRoutes = require('./routes/frontEndLoginRoutes')
+const cRoutes = require('./src/routes/carritoRoutes.es6');
+const pRoutes = require('./src/routes/productosRoutes.es6.js');
+const uRoutes = require('./src/routes/usuarioRoutes.es6')
+const chRoutes = require('./src/routes/chatRoutes')
+const FeRoutes = require('./src/routes/frontEndLoginRoutes')
+
 
 
 app.use('/api/productos', pRoutes)
@@ -109,7 +103,7 @@ app.get('/', (req, res) => {
                 io.emit('productos', { user: user, state: true, arrPro: productos, itemExist: true })
             })
             socket.on('chat', data1 => {
-                let arrMSG = data1.arr
+                let arrMSG = []
                 arrMSG.push({id: 'DM', user: user, mensaje: data1.msj})
                 logger.log('info', "finMsg ----------------------------------------------------------------------------------------------->");
                 io.emit('message', arrMSG)
@@ -122,7 +116,14 @@ app.get('/', (req, res) => {
     }
 })
 
-
+// app.use(function(req, res, next) {
+//     res.status(404);
+//     res.send('404: File Not Found');
+// });
+// app.use(function(req, res, next) {
+//     res.status(403);
+//     res.send('403: Forbiden');
+// });
 
 
 
