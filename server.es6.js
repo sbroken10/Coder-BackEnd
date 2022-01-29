@@ -53,7 +53,7 @@ app.use(morgan('dev'));
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.static(path.join(__dirname, '/src/public')))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use((req, res, next) => {
@@ -87,7 +87,9 @@ app.get('/info', (req, res) => {
     res.send(process.memoryUsage())
 })
 app.get('/', (req, res) => {
+    logger.log('info', req.session.email)
     if (req.session.email) {
+        logger.log('info', 'si entro al IF el perro este')
         io.on('connection', (socket) => {
             logger.log('info', "socketID ---------------------------------------------------------->");
             logger.log('info', socket.id);
@@ -101,9 +103,10 @@ app.get('/', (req, res) => {
                 let proData = JSON.stringify(data);
                 productos = JSON.parse([proData])
                 io.emit('productos', { user: user, state: true, arrPro: productos, itemExist: true })
+                console.log('enviado productos')
             })
             socket.on('chat', data1 => {
-                let arrMSG = []
+                let arrMSG = data1.arr
                 arrMSG.push({id: 'DM', user: user, mensaje: data1.msj})
                 logger.log('info', "finMsg ----------------------------------------------------------------------------------------------->");
                 io.emit('message', arrMSG)
@@ -124,6 +127,9 @@ app.get('/', (req, res) => {
 //     res.status(403);
 //     res.send('403: Forbiden');
 // });
+
+
+
 
 
 
